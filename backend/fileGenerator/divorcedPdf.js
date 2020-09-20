@@ -6,7 +6,7 @@ require("moment/locale/fr");
 moment.locale("fr");
 // Create a document
 
-async function generateDoc({ form }) {
+async function generatePdf({ form }) {
   //   const user = await User.findOne();
   //   const folder = await Folder.findById(user.folders[0]);
   //   const form = folder.form;
@@ -17,7 +17,10 @@ async function generateDoc({ form }) {
   const fs = require("fs");
   // Pipe its output somewhere, like to a file or HTTP response
   // See below for browser usage
-  doc.pipe(fs.createWriteStream("output.pdf"));
+  const random = Math.floor(Math.random() * (100000000 - 0)) + 1;
+  const stream = doc.pipe(
+    fs.createWriteStream("doc/pdf/" + random + "output.pdf")
+  );
 
   // Embed a font, set the font size, and render some text
   const path = require("path");
@@ -1762,7 +1765,9 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
 
   renderBottomSignature(doc, form);
 
-  renderCenterBoldText(doc, "ANNEXÉS");
+  doc.addPage();
+
+  renderCenterBoldText(doc, "ANNEXES");
 
   let arrayAnnex = [
     `Copie de la carte d’identité de Madame ${épouseNom}`,
@@ -1818,6 +1823,18 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
 
   // Finalize PDF file
   doc.end();
+
+  const buffer = await new Promise((resolve, reject) => {
+    stream.on("finish", async function () {
+      fs.readFile("doc/pdf/" + random + "output.pdf", function (err, data) {
+        fs.unlink("doc/pdf/" + random + "output.pdf", function (err) {
+          console.log(err);
+        });
+        resolve(data);
+      });
+    });
+  });
+  return buffer;
 }
 
 async function generateAnnexePdf({ client }) {
@@ -2091,5 +2108,5 @@ function calcDate(date1, date2) {
 
 module.exports = {
   generateAnnexePdf,
-  generateDoc,
+  generatePdf,
 };

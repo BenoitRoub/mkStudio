@@ -26,23 +26,15 @@ let FolderController = {
   generateDoc: async function (req, res) {
     var folder = await Folder.findById(req.body.folderId);
 
+    if (req.body.form) {
+      folder.form = req.body.form;
+    }
     if (!folder) {
       res.sendStatus(405);
       return;
     }
 
-    if (req.body.form) {
-      folder.form = req.body.form;
-    }
-
-    let buffer = await generateDoc({ form: req.body.form });
-
-    // let buffer = await Packer.toBuffer(doc);
-    // if (!Buffer.isBuffer(buffer)) {
-    //   buffer = Buffer.from(buffer);
-    // }
-
-    const fileDoc = await registerFile(req, res, folder, buffer);
+    const form = req.body.form || folder.form;
 
     /** DELETE all previous generated Files */
     if (folder.files) {
@@ -57,18 +49,14 @@ let FolderController = {
       folder.files = [];
     }
 
+    let docBuffer = await generateDoc({ form });
+    const fileDoc = await registerFile(req, res, folder, docBuffer, "doc");
+
+    let pdfBuffer = await generatePdf.generatePdf({ form });
+    const pdfFile = await registerFile(req, res, folder, pdfBuffer, "pdf");
+
     folder.files.push(fileDoc._id);
-
-    // let pdf = generatePdf.generatePdf({ form: req.body.form });
-
-    // let buffer = await Packer.toBuffer(doc);
-    // if (!Buffer.isBuffer(buffer)) {
-    //   buffer = Buffer.from(buffer);
-    // }
-
-    // const pdfFile = await registerFile(req, res, folder, buffer);
-
-    // folder.files.push(pdfFile._id);
+    folder.files.push(pdfFile._id);
 
     await folder.save();
 
@@ -134,7 +122,7 @@ var s3 = new AWS.S3();
 
 const { Document, Packer, Paragraph, TextRun } = docx;
 
-async function registerFile(req, res, folder, buffer) {
+async function registerFile(req, res, folder, buffer, type) {
   const file = await new File({
     userId: req.user.id,
     folderId: folder._id,
@@ -143,13 +131,23 @@ async function registerFile(req, res, folder, buffer) {
     imported: false,
   });
 
-  var params = {
-    Bucket: "soluo-avocats",
-    Body: buffer,
-    Key: folder._id + "/doc/" + file._id + ".docx",
-    ContentType:
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  };
+  var params = {};
+  if (type === "pdf") {
+    params = {
+      Bucket: "soluo-avocats",
+      Body: buffer,
+      Key: folder._id + "/pdf/" + file._id + ".pdf",
+      ContentType: "application/pdf",
+    };
+  } else {
+    params = {
+      Bucket: "soluo-avocats",
+      Body: buffer,
+      Key: folder._id + "/doc/" + file._id + ".docx",
+      ContentType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    };
+  }
 
   s3.putObject(params, function (err, data) {
     if (err) {
@@ -160,15 +158,27 @@ async function registerFile(req, res, folder, buffer) {
 
   file.dateUrlSigned = new Date();
 
-  file.docPath = folder._id + "/doc/" + file._id + ".docx";
+  if (type === "doc") {
+    file.docPath = folder._id + "/doc/" + file._id + ".docx";
 
-  const docUrlSigned = s3.getSignedUrl("getObject", {
-    Bucket: "soluo-avocats",
-    Key: folder._id + "/doc/" + file._id + ".docx",
-    Expires: 60 * 5, // 300s
-  });
+    const docUrlSigned = s3.getSignedUrl("getObject", {
+      Bucket: "soluo-avocats",
+      Key: folder._id + "/doc/" + file._id + ".docx",
+      Expires: 60 * 5, // 300s
+    });
 
-  file.docUrlSigned = docUrlSigned;
+    file.docUrlSigned = docUrlSigned;
+  } else {
+    file.pdfPath = folder._id + "/pdf/" + file._id + ".pdf";
+
+    const pdfUrlSigned = s3.getSignedUrl("getObject", {
+      Bucket: "soluo-avocats",
+      Key: folder._id + "/pdf/" + file._id + ".pdf",
+      Expires: 60 * 5, // 300s
+    });
+    file.pdfUrlSigned = pdfUrlSigned;
+  }
+
   await file.save();
 
   return file;

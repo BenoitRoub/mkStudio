@@ -10,7 +10,10 @@ const path = require("path");
 const { Document, Packer, Paragraph, TextRun, Media } = docx;
 
 async function generateDoc({ form }) {
-  const docGenerated = new Document();
+  const docGenerated = new Document({
+    title:
+      "Convention de divorce par consetement mutuelle " + form.first.lastname,
+  });
   const doc = [];
 
   const user = await User.findOne();
@@ -1744,8 +1747,8 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
   renderImage(doc, image);
 
   //   renderBottomSignature(doc, form);
-
-  renderCenterBoldText(doc, "ANNEXÉS");
+  const annex = [];
+  renderCenterBoldText(annex, "ANNEXES");
 
   let arrayAnnex = [
     `Copie de la carte d’identité de Madame ${épouseNom}`,
@@ -1797,13 +1800,15 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
     arrayAnnex.push(`Copie du contrat de mariage `);
   }
 
-  renderBulletPoint(doc, arrayAnnex);
+  renderBulletPoint(annex, arrayAnnex);
 
   docGenerated.addSection({
     children: doc,
   });
 
-  console.log("write file");
+  docGenerated.addSection({
+    children: annex,
+  });
 
   let buffer = await Packer.toBuffer(docGenerated);
   if (!Buffer.isBuffer(buffer)) {

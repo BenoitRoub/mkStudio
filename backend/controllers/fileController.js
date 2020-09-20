@@ -32,7 +32,6 @@ let FileController = {
       Key: path,
       ContentType: "application/pdf",
     };
-
     s3.putObject(params, function (err, data) {
       if (err) {
         throw err;
