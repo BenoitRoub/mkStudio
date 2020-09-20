@@ -96,6 +96,7 @@ function FolderOpen({ folder }) {
           (file) =>
             !file.imported && (
               <>
+                {console.log(file)}
                 {file.pdfPath && file.pdfUrlSigned && (
                   <FileListItem
                     name={file.name}
