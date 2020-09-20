@@ -67,10 +67,10 @@ app.use(app.locals.isAuthenticated);
 var user = require("./routes/userRoutes");
 app.use("/user", user);
 
-var folder = require("./routes/FolderRoutes");
+var folder = require("./routes/folderRoutes");
 app.use("/folder", folder);
 
-var file = require("./routes/FileRoutes");
+var file = require("./routes/fileRoutes");
 app.use("/file", file);
 
 // set the port of our application
