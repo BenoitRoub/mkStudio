@@ -30,7 +30,7 @@ AWS.config.update({
 const s3 = new AWS.S3();
 s3.headBucket(
   {
-    Bucket: "soluo-avocats",
+    Bucket: process.env.s3BucketName,
   },
   function (err, data) {
     if (err) console.log(err, err.stack);

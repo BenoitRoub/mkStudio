@@ -3,6 +3,7 @@ const Folder = require("../models/folderModel");
 const File = require("../models/fileModel");
 var generatePdf = require(".././fileGenerator/divorcedPdf");
 var generateDoc = require(".././fileGenerator/divorcedDoc");
+require("dotenv").config();
 
 let FolderController = {
   create: async function (req, res) {
@@ -75,7 +76,7 @@ let FolderController = {
         if (new Date().getTime() - foundFile.dateUrlSigned.getTime() > 59 * 5) {
           const pdfUrlSigned = foundFile.pdfPath
             ? s3.getSignedUrl("getObject", {
-                Bucket: "soluo-avocats",
+                Bucket: process.env.s3BucketName,
                 Key: foundFile.pdfPath,
                 Expires: 60 * 5, // 300s
               })
@@ -83,7 +84,7 @@ let FolderController = {
 
           const docUrlSigned = foundFile.docPath
             ? s3.getSignedUrl("getObject", {
-                Bucket: "soluo-avocats",
+                Bucket: process.env.s3BucketName,
                 Key: foundFile.docPath,
                 Expires: 60 * 5, // 300s
               })
@@ -134,14 +135,14 @@ async function registerFile(req, res, folder, buffer, type) {
   var params = {};
   if (type === "pdf") {
     params = {
-      Bucket: "soluo-avocats",
+      Bucket: process.env.s3BucketName,
       Body: buffer,
       Key: folder._id + "/pdf/" + file._id + ".pdf",
       ContentType: "application/pdf",
     };
   } else {
     params = {
-      Bucket: "soluo-avocats",
+      Bucket: process.env.s3BucketName,
       Body: buffer,
       Key: folder._id + "/doc/" + file._id + ".docx",
       ContentType:
@@ -162,7 +163,7 @@ async function registerFile(req, res, folder, buffer, type) {
     file.docPath = folder._id + "/doc/" + file._id + ".docx";
 
     const docUrlSigned = s3.getSignedUrl("getObject", {
-      Bucket: "soluo-avocats",
+      Bucket: process.env.s3BucketName,
       Key: folder._id + "/doc/" + file._id + ".docx",
       Expires: 60 * 5, // 300s
     });
@@ -172,7 +173,7 @@ async function registerFile(req, res, folder, buffer, type) {
     file.pdfPath = folder._id + "/pdf/" + file._id + ".pdf";
 
     const pdfUrlSigned = s3.getSignedUrl("getObject", {
-      Bucket: "soluo-avocats",
+      Bucket: process.env.s3BucketName,
       Key: folder._id + "/pdf/" + file._id + ".pdf",
       Expires: 60 * 5, // 300s
     });
