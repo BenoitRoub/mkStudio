@@ -4,8 +4,8 @@ import { readCookie } from "../hoc/Authorization";
 export const config = {
   API_URI:
     process.env.NODE_ENV === "production"
-      ? "http://localhost:3001" // process.env.REACT_APP_API_URI
-      : "http://localhost:3001",
+      ? "http://127.0.0.1:3001" // process.env.REACT_APP_API_URI
+      : "http://127.0.0.1:3001",
 };
 
 export async function getAuth(path, onResponse) {
