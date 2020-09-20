@@ -1,6 +1,6 @@
 var express = require("express");
 
-var folderController = require("../controllers/FolderController");
+var folderController = require("../controllers/folderController");
 
 var router = express.Router();
 

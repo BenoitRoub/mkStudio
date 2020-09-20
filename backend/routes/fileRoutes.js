@@ -1,6 +1,6 @@
 var express = require("express");
 
-var fileController = require("../controllers/FileController");
+var fileController = require("../controllers/fileController");
 
 var router = express.Router();
 
