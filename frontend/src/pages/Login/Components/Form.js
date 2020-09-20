@@ -15,6 +15,8 @@ function Form() {
   const classes = useStyles();
   const history = useHistory();
 
+  const [connect, setConnect] = useState(true);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,13 +24,22 @@ function Form() {
   const userContext = useContext(UserContext);
 
   function handleClick() {
-    postNotAuth(
-      "/user/login",
-      { email, password },
-      { 200: history.push("/folders") }
-    ).then((res) => {
-      authContext.setAuthToken(res.data);
-    });
+    if (connect) {
+      postNotAuth(
+        "/user/login",
+        { email, password },
+        { 200: history.push("/folders") }
+      ).then((res) => {
+        authContext.setAuthToken(res.data);
+      });
+    } else
+      postNotAuth(
+        "/user/signup",
+        { email, password },
+        { 200: history.push("/folders") }
+      ).then((res) => {
+        authContext.setAuthToken(res.data);
+      });
   }
 
   return (
@@ -63,9 +74,22 @@ function Form() {
           }}
         />
 
-        <ButtonBase className={classes.button} onClick={handleClick}>
-          Connexion
-        </ButtonBase>
+        {connect ? (
+          <ButtonBase className={classes.button} onClick={handleClick}>
+            Connexion
+          </ButtonBase>
+        ) : (
+          <ButtonBase className={classes.button} onClick={handleClick}>
+            Créer
+          </ButtonBase>
+        )}
+
+        <Typography
+          className={classes.switchLabel}
+          onClick={() => setConnect(!connect)}
+        >
+          {connect ? "Ou créer un compte" : "Déjà enregistré ? "}
+        </Typography>
       </div>
     </div>
   );
@@ -145,6 +169,13 @@ const useStyles = makeStyles((theme) => {
       color: "#757575",
       paddingLeft: 12,
       marginBottom: 4,
+    },
+    switchLabel: {
+      color: theme.palette.primary.main,
+      textDecoration: "underline",
+      marginTop: 12,
+      textAlign: "center",
+      cursor: "pointer",
     },
     input: {
       marginBottom: theme.spacing(3),
