@@ -4,7 +4,7 @@ import { readCookie } from "../hoc/Authorization";
 export const config = {
   API_URI:
     process.env.NODE_ENV === "production"
-      ? "http://ec2-3-19-72-72.us-east-2.compute.amazonaws.com/:3001" // process.env.REACT_APP_API_URI
+      ? "http://3.19.72.72:3001" // process.env.REACT_APP_API_URI
       : "http://127.0.0.1:3001",
 };
 
