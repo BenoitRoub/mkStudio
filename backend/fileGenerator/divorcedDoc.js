@@ -1815,6 +1815,8 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
     buffer = Buffer.from(buffer);
   }
 
+  console.log(buffer);
+
   return buffer;
 }
 
