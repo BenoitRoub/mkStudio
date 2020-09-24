@@ -19,9 +19,25 @@ let UserController = {
     );
   },
   login: async function (req, res) {
+    if (
+      !req.body.email ||
+      req.body.email === "" ||
+      !req.body.password ||
+      req.body.password === ""
+    ) {
+      res.sendStatus(402);
+      return;
+    }
+
     var user = await User.findOne({
       email: req.body.email,
     });
+
+    if (!user) {
+      res.sendStatus(402);
+      return;
+    }
+
     const valid = await bcrypt.compare(req.body.password, user.password);
     if (!valid) {
       res.sendStatus(402);

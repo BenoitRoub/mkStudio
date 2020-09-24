@@ -20,7 +20,14 @@ let FolderController = {
     user.folders.push(folder._id);
     await user.save();
 
-    //await generateFile(req, res, folder);
+    res.json(folder);
+  },
+  saveForm: async function (req, res) {
+    const folder = await Folder.findById(req.body.id);
+
+    folder.form = req.body.form;
+
+    await folder.save();
 
     res.json(folder);
   },

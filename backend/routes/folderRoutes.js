@@ -8,6 +8,8 @@ router.post("/create", folderController.create);
 
 router.post("/get", folderController.getFolder);
 
+router.post("/saveForm", folderController.saveForm);
+
 router.post("/generateDoc", folderController.generateDoc);
 
 module.exports = router;

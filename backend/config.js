@@ -6,11 +6,6 @@ const config = {
 
     AWSAccessKeyId: process.env.AWSAccessKeyId,
     AWSSecretKey: process.env.AWSSecretKey,
-
-    //   mailjet: {
-    //     publicKey: "3a1515f8f4d1b22ffd05190047ebd108",
-    //     privateKey: "b521e6a44a9a525b298321bcec2f426b",
-    //   },
   },
 
   development: {
@@ -22,11 +17,6 @@ const config = {
 
     AWSAccessKeyId: process.env.AWSAccessKeyId,
     AWSSecretKey: process.env.AWSSecretKey,
-
-    //   mailjet: {
-    //     publicKey: "3a1515f8f4d1b22ffd05190047ebd108",
-    //     privateKey: "b521e6a44a9a525b298321bcec2f426b",
-    //   },
   },
 };
 

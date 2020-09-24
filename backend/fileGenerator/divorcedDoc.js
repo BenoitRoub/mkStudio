@@ -183,7 +183,7 @@ async function generateDoc({ form }) {
       doc,
       "Il existe en l’espèce des éléments d’extranéité en raison de :"
     );
-
+    // TODO
     renderTextTiret(
       doc,
       `la nationalité étrangère de ${"hello"}, en l’espèce de nationalité «Homme_nationalité»«Femme_nationalité».`
@@ -1814,8 +1814,6 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
   if (!Buffer.isBuffer(buffer)) {
     buffer = Buffer.from(buffer);
   }
-
-  console.log(buffer);
 
   return buffer;
 }

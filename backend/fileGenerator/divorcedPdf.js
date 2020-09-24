@@ -13,6 +13,8 @@ async function generatePdf({ form }) {
 
   const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
 
+  const husbandName = `${form.first.birthname} ${form.first.lastname}`;
+
   const doc = new PDFDocument();
   const fs = require("fs");
   // Pipe its output somewhere, like to a file or HTTP response
@@ -43,7 +45,7 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Monsieur ${form.first.firstname} ${form.first.birthname}, né le ${moment(
+    `Monsieur ${form.first.firstname} ${form.first.lastname}, né le ${moment(
       form.first.birthdate
     ).format("DD/MM/YYYY")} à ${form.first.birthplace}, de nationalité ${
       form.first.nationality
@@ -70,7 +72,7 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Monsieur ${form.second.firstname} ${form.second.birthname}, né le ${moment(
+    `Madame ${form.second.firstname} ${form.second.birthname}, né le ${moment(
       form.second.birthdate
     ).format("DD/MM/YYYY")} à ${form.second.birthplace}, de nationalité ${
       form.second.nationality
@@ -281,7 +283,7 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Madame ${form.second.lastname + " " + form.second.birthname} et Monsieur ${
+    `Madame ${épouseNom} et Monsieur ${
       form.first.lastname
     } ont contracté mariage le ${moment(form.wedding.weddingDate).format(
       "DD MMMM YYYY"
@@ -297,7 +299,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (!form.wedding.isConsortForeign) {
+  if (form.wedding.isConsortForeign) {
     renderText(
       doc,
       "Le régime matrimonial applicable aux époux est déterminé par la Convention de La Haye du 14 mars 1978."
@@ -366,10 +368,13 @@ async function generatePdf({ form }) {
         doc,
         `Or, les époux ${form.first.lastname}-${form.second.birthname} ont installé leur première résidence commune sur le sol Français.`
       );
+
+      renderText(
+        doc,
+        "Le régime applicable est donc le régime légal français."
+      );
     }
   }
-
-  renderText(doc, "Le régime applicable est donc le régime légal français.");
 
   if (!form.wedding.isWeddingContrat) {
     renderText(
@@ -383,8 +388,11 @@ async function generatePdf({ form }) {
         form.wedding.weddingDate
       ).format("DD MMMM YYYY")} par Maître ${
         form.wedding.weddingContratNotary
-      }, Notaire associé au sein de la ${
-        form.wedding.weddingContratNotaryCompanyName
+      }${
+        !form.wedding.weddingContratNotaryCompanyName ||
+        form.wedding.weddingContratNotaryCompanyName !== ""
+          ? `, Notaire associé au sein de la ${form.wedding.weddingContratNotaryCompanyName}`
+          : ""
       }, étude notariale située ${form.wedding.weddingContratNotaryAdress}.`
     );
   }
@@ -409,7 +417,7 @@ async function generatePdf({ form }) {
   } else {
     renderText(
       doc,
-      `${sharedChildrenNumber} enfants ${
+      `${sharedChildrenNumber} enfant${sharedChildrenNumber > 1 ? "s" : ""} ${
         sharedChildrenNumber > 1 ? "sont" : "est"
       } issus de cette union :`
     );
@@ -418,7 +426,7 @@ async function generatePdf({ form }) {
     for (let count = 1; count < sharedChildrenNumber + 1; count++) {
       tableSharedChildren.push(
         `${form.children[`children${count}Lastname`]} ${
-          form.children[`children${count}FirstName`]
+          form.children[`children${count}Firstname`]
         }, né le ${moment(form.children[`children${count}BirthDate`]).format(
           "DD MMMM YYYY"
         )}, à ${form.children[`children${count}BirthLocation`]}`
@@ -435,17 +443,19 @@ async function generatePdf({ form }) {
         secondChildrenNumber++;
       }
     }
-    //TODO VARIABLE firstChildrenNumber en toute lettre
+
     renderText(
       doc,
-      `${secondChildrenNumber} enfants sont issus de cette union :`
+      `Par ailleurs ${épouseNom} a eu ${secondChildrenNumber} enfant${
+        secondChildrenNumber > 1 ? "s" : ""
+      } d'une union précédente :`
     );
 
     let tableSecondChildren = [];
     for (let count = 1; count < secondChildrenNumber + 1; count++) {
       tableSecondChildren.push(
         `${form.children[`participant2children${count}Lastname`]} ${
-          form.children[`participant2children${count}FirstName`]
+          form.children[`participant2children${count}Firstname`]
         }, né le ${moment(
           form.children[`participant2children${count}BirthDate`]
         ).format("DD MMMM YYYY")}, à ${
@@ -464,17 +474,19 @@ async function generatePdf({ form }) {
         firstChildrenNumber++;
       }
     }
-    //TODO VARIABLE firstChildrenNumber en toute lettre
+
     renderText(
       doc,
-      `${firstChildrenNumber} enfants sont issus de cette union :`
+      `Par ailleurs ${fomr.first.lastname} a eu ${firstChildrenNumber} enfant${
+        firstChildrenNumber > 1 ? "s" : ""
+      } d'une union précédente :`
     );
 
     let tableFirstChildren = [];
     for (let count = 1; count < firstChildrenNumber + 1; count++) {
       tableFirstChildren.push(
         `${form.children[`participant1children${count}Lastname`]} ${
-          form.children[`participant1children${count}FirstName`]
+          form.children[`participant1children${count}Firstname`]
         }, né le ${moment(
           form.children[`participant1children${count}BirthDate`]
         ).format("DD MMMM YYYY")}, à ${
@@ -487,16 +499,18 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Madame ${form.second.birthname} épouse ${form.second.lastname} exerce la profession de ${form.second.profession}. Elle déclare percevoir à ce titre un revenu mensuel moyen de ${form.second.income}€.`
+    `Madame ${épouseNom} exerce la profession d${
+      isVoyelle(form.second.profession) ? "'" : "e"
+    } ${
+      form.second.profession
+    }. Elle déclare percevoir à ce titre un revenu mensuel moyen de ${
+      form.second.income
+    }€.`
   );
 
   if (!form.realProperty.natureFirstPropretyParticipant2) {
     renderText(doc, "Elle déclare n’être propriétaire d’aucun bien propre.");
   } else {
-    renderText(doc, "Elle est propriétaire des biens propres suivants :");
-
-    renderText(doc, "Il s’agit de :");
-
     let tableSecondOwnProperty = [];
     const labelOwnProperty = ["First", "Second", "Third", "Fourth"];
     for (let label of labelOwnProperty) {
@@ -508,21 +522,32 @@ async function generatePdf({ form }) {
         );
     }
 
+    renderText(
+      doc,
+      `Elle est propriétaire de${tableSecondOwnProperty > 1 ? "s" : ""} bien${
+        tableSecondOwnProperty > 1 ? "s" : ""
+      } propre${tableSecondOwnProperty > 1 ? "s" : ""} suivant${
+        tableSecondOwnProperty > 1 ? "s" : ""
+      } :`
+    );
+
     renderBulletPoint(doc, tableSecondOwnProperty);
   }
 
   renderText(
     doc,
-    `Monsieur ${form.first.lastname} exerce la profession de ${form.first.profession}. Il déclare percevoir à ce titre un revenu mensuel moyen de ${form.first.income}€.`
+    `Monsieur ${form.first.lastname} exerce la profession d${
+      isVoyelle(form.first.profession) ? "'" : "e"
+    } ${
+      form.first.profession
+    }. Il déclare percevoir à ce titre un revenu mensuel moyen de ${
+      form.first.income
+    }€.`
   );
 
   if (!form.realProperty.natureFirstProprety) {
     renderText(doc, "Il déclare n’être propriétaire d’aucun bien propre.");
   } else {
-    renderText(doc, "Il est propriétaire des biens propres suivants :");
-
-    renderText(doc, "Il s’agit de :");
-
     let tableFirstOwnProperty = [];
     const labelOwnProperty = ["First", "Second", "Third", "Fourth"];
     for (let label of labelOwnProperty) {
@@ -533,6 +558,14 @@ async function generatePdf({ form }) {
           }.`
         );
     }
+    renderText(
+      doc,
+      `Il est propriétaire de${tableFirstOwnProperty > 1 ? "s" : ""} bien${
+        tableFirstOwnProperty > 1 ? "s" : ""
+      } propre${tableFirstOwnProperty > 1 ? "s" : ""} suivant${
+        tableFirstOwnProperty > 1 ? "s" : ""
+      } :`
+    );
 
     renderBulletPoint(doc, tableFirstOwnProperty);
   }
@@ -633,10 +666,8 @@ async function generatePdf({ form }) {
   }
 
   if (form.propertyDistribution.isSharedVehicles) {
-    renderText(doc, "Par ailleurs, les époux sont propriétaires :");
-
     const vehiclesArray = [];
-    const vehicleLabelArray = ["first, 'second", "third"];
+    const vehicleLabelArray = ["first", "second", "third"];
     for (let label of vehicleLabelArray) {
       if (form.propertyDistribution[`${label}Vehicle`]) {
         vehiclesArray.push(
@@ -649,7 +680,11 @@ async function generatePdf({ form }) {
       }
     }
 
-    renderBulletPoint(doc, vehiclesArray);
+    if (vehiclesArray.length) {
+      renderText(doc, "Par ailleurs, les époux sont propriétaires :");
+
+      renderBulletPoint(doc, vehiclesArray);
+    }
   }
 
   renderIndentTitle(doc, "Sur la date des effets du divorce");
@@ -665,7 +700,7 @@ async function generatePdf({ form }) {
     "- lorsqu'il est constaté par consentement mutuel par acte sous signature privée contresigné par avocats déposé au rang des minutes d'un notaire, à la date à laquelle la convention réglant l'ensemble des conséquences du divorce acquiert force exécutoire, à moins que cette convention n'en stipule autrement »"
   );
 
-  if (!form.wedding.separationDate) {
+  if (!form.wedding.dateEndWedding) {
     renderText(
       doc,
       "Les époux ont convenu que leur divorce prendra effet, en ce qui concerne leurs biens, à la date de dépôt de la présente convention au rang des minutes du Notaire désigné ci-après. "
@@ -674,7 +709,7 @@ async function generatePdf({ form }) {
     renderText(
       doc,
       `Les époux ont convenu que leur divorce prendra effet, en ce qui concerne leurs biens, à la date à laquelle ils sont cessé de cohabiter et de collaborer, soit le ${moment(
-        form.wedding.separationDate
+        form.wedding.dateEndWedding
       ).format("DD/MM/YYYY")}.`
     );
   }
@@ -812,22 +847,15 @@ async function generatePdf({ form }) {
     renderItallicText(
       doc,
       `Revenus professionnels :
-      2018 : ${form.first.totalIncome}€ annuels`
+      ${moment().subtract(1, "year").format("YYYY")} : ${
+        form.first.totalIncome
+      }€ annuels`
     );
 
     renderItallicText(
       doc,
       `Total des revenus professionnels :
       ${form.first.income}€/mois `
-    );
-
-    renderBoldText(doc, "Patrimoine");
-
-    //TODO VARIABLE XXXXX nouvelle variable ? QUESTION
-    renderText(
-      doc,
-      `Le patrimoine de Monsieur ${form.first.lastname} est le suivant : 
-  XXXXXXXXXXXXXXX`
     );
 
     renderCenterBoldText(doc, "****");
@@ -859,7 +887,7 @@ async function generatePdf({ form }) {
 
     renderText(
       doc,
-      `${épouseNom} exerce la profession de ${form.second.profession}.`
+      `Madame ${épouseNom} exerce la profession de ${form.second.profession}.`
     );
 
     renderBoldText(doc, "Revenus :");
@@ -867,7 +895,9 @@ async function generatePdf({ form }) {
     renderItallicText(
       doc,
       `Revenus professionnels :
-        2018 : ${form.second.totalIncome}€ annuels`
+        ${moment().subtract(1, "year").format("YYYY")} : ${
+        form.second.totalIncome
+      }€ annuels`
     );
 
     renderItallicText(
@@ -1096,16 +1126,20 @@ async function generatePdf({ form }) {
     );
   }
 
-  //QUESTION nom du notaire  ????
   if (form.wedding.isWeddingContrat) {
     renderText(
       doc,
-      `Les époux ont opté pour le régime de la séparation de biens, selon contrat reçu le «Date_contrat_de_mariage» par Maître «Nom_notaire_contrat_mariage», Notaire associé au sein de la «Nom_étude_notaire_contrat_mariage», étude notariale située «Adresse_étude_notaire_contrat_mariage».`
+      `Les époux ont opté pour le régime de la séparation de biens, selon contrat reçu le ${
+        form.wedding.weddingContratDate
+      } par Maître ${form.wedding.weddingContratNotary}${
+        !form.wedding.weddingContratNotaryCompanyName ||
+        form.wedding.weddingContratNotaryCompanyName !== ""
+          ? `, Notaire associé au sein de la ${form.wedding.weddingContratNotaryCompanyName}`
+          : ""
+      }, étude notariale située ${form.wedding.weddingContratNotaryAdress}.`
     );
   } else if (true) {
-    //QUESTION VARIABLE LIQUIDATION
-
-    //QUESTION nom du notaire de liquidation ????
+    //QUESTION nom du notaire de liquidation ???? TODO
     renderText(
       doc,
       `Les parties ont confié à l’Etude notariale ${form.wedding.weddingContratNotary} le soin d’établir un acte de liquidation et partage de leur régime matrimonial, lequel a été régularisé en date du [date] annexé à la présente convention et faisant corps avec elle.`
@@ -1195,9 +1229,11 @@ async function generatePdf({ form }) {
         arrayChildrenShared.push(
           `${form.children[`children${label}Lastname`]} ${
             form.children[`children${label}Firstname`]
-          }, né le ${moment(form.children[`children${label}BirthDate`]).format(
-            "DD/MM/YYYY"
-          )}, ${form.children[`children${label}BirthLocation`]}`
+          }, né${form.children[`children${label}IsBoy`] ? "" : "e"} le ${moment(
+            form.children[`children${label}BirthDate`]
+          ).format("DD/MM/YYYY")}, à ${
+            form.children[`children${label}BirthLocation`]
+          }`
         );
       }
     }
@@ -1356,7 +1392,7 @@ Tout changement de résidence de l'un des parents, dès lors qu'il modifie les m
 
       renderText(
         doc,
-        `Cette contribution à l’entretien sera versée par ${
+        `Cette contribution sera versée par ${
           form.children.alimonyParticipantAsk === "first"
             ? `Madame ${épouseNom}`
             : `Monsieur ${form.first.lastname}`
@@ -1369,14 +1405,11 @@ Tout changement de résidence de l'un des parents, dès lors qu'il modifie les m
 
       renderText(
         doc,
-        `Cette contribution à l’entretien sera due jusqu’à ce que l’enfant soit indépendant financièrement. `
-      );
-    } else {
-      renderText(
-        doc,
-        `
-Les époux conviennent qu’aucune contribution à l’entretien et à l’éducation des enfants ne sera versée.
-`
+        `Cette contribution sera due jusqu’à ce que l${
+          sharedChildrenNumber > 1 ? "es" : "'"
+        } enfant${sharedChildrenNumber > 1 ? "s" : ""} soi${
+          sharedChildrenNumber > 1 ? "en" : ""
+        }t indépendant${sharedChildrenNumber > 1 ? "s" : ""} financièrement. `
       );
 
       renderText(
@@ -1490,6 +1523,13 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
         `7° L'obligation d'accomplir un stage de responsabilité parentale, selon les modalités fixées à l'article  131-35-1 »
 `
       );
+    } else {
+      renderText(
+        doc,
+        `
+Les époux conviennent qu’aucune contribution à l’entretien et à l’éducation des enfants ne sera versée.
+`
+      );
     }
 
     renderIndentTitle(
@@ -1516,21 +1556,6 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
     } else {
       renderText(doc, `Les époux déclarent que leurs enfants :`);
     }
-
-    // let arrayChildrenShared = [];
-    // let labelchildrenShared = [1, 2, 3, 4, 5];
-
-    // for (let label of labelchildrenShared) {
-    //   if (form.children[`children${label}Lastname`]) {
-    //     arrayChildrenShared.push(
-    //       `${form.children[`children${label}Lastname`]} ${
-    //         form.children[`children${label}Firstname`]
-    //       }, né le ${moment(form.children[`children${label}BirthDate`]).format(
-    //         "DD/MM/YYYY"
-    //       )}, ${form.children[`children${label}BirthLocation`]}`
-    //     );
-    //   }
-    // }
 
     renderBulletPoint(doc, arrayChildrenShared);
 
@@ -1609,32 +1634,32 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
     `Maître «Notaire_prénom_et_nom», Notaire,  délivrera une attestation de dépôt à chaque partie`
   );
 
-  //TO DO IF IS FOREIGN
+  if (form.wedding.isConsortForeign) {
+    renderBlueTitle(
+      doc,
+      `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`
+    );
 
-  renderBlueTitle(
-    doc,
-    `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`
-  );
+    renderText(
+      doc,
+      `Si l’un des époux est de nationalité étrangère, celui-ci est informé par la présente clause du fait que le divorce par consentement mutuel de droit français, en vigueur depuis le 1er janvier 2017, enregistré par un Notaire, et non par un juge, n’est pas reconnu à l’heure actuelle par certains systèmes juridiques étrangers (Algérie, Tunisie, Maroc, Mali, Sénégal entre autres).`
+    );
 
-  renderText(
-    doc,
-    `Si l’un des époux est de nationalité étrangère, celui-ci est informé par la présente clause du fait que le divorce par consentement mutuel de droit français, en vigueur depuis le 1er janvier 2017, enregistré par un Notaire, et non par un juge, n’est pas reconnu à l’heure actuelle par certains systèmes juridiques étrangers (Algérie, Tunisie, Maroc, Mali, Sénégal entre autres).`
-  );
+    renderText(
+      doc,
+      "Les époux ont été invités à consulter les autorités du pays dont ils ont la nationalité (consulat, ambassade), afin de se renseigner sur la procédure applicable en vigueur."
+    );
 
-  renderText(
-    doc,
-    "Les époux ont été invités à consulter les autorités du pays dont ils ont la nationalité (consulat, ambassade), afin de se renseigner sur la procédure applicable en vigueur."
-  );
+    renderText(
+      doc,
+      "Il peut être nécessaire, pour que le divorce soit transcrit dans ces pays, de mener sur place une procédure de divorce distincte."
+    );
 
-  renderText(
-    doc,
-    "Il peut être nécessaire, pour que le divorce soit transcrit dans ces pays, de mener sur place une procédure de divorce distincte."
-  );
-
-  renderBoldText(
-    doc,
-    "Les époux déclarent avoir été informés de cette situation juridique, et excluent d’engager toute responsabilité des Avocats ou du Notaire désigné dans les présentes."
-  );
+    renderBoldText(
+      doc,
+      "Les époux déclarent avoir été informés de cette situation juridique, et excluent d’engager toute responsabilité des Avocats ou du Notaire désigné dans les présentes."
+    );
+  }
 
   renderBlueTitle(doc, "TRANSCRIPTION AUPRES DES SERVICES D’état CIVIL");
 
@@ -1724,12 +1749,12 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
 
   renderText(
     doc,
-    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, a adressé le projet de convention par lettre recommandée avec avis de réception le __/__/2020, reçue le __/__/2020.`
+    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, a adressé le projet de convention par lettre recommandée avec avis de réception le __/__/____, reçue le __/__/____.`
   );
 
   renderText(
     doc,
-    `Maître ${form.second.selfLawyer}, Conseil de Madame ${épouseNom} a adressé le projet de convention par lettre recommandée avec avis de réception le __/__/2020, reçue le __/__/2020.`
+    `Maître ${form.second.selfLawyer}, Conseil de Madame ${épouseNom} a adressé le projet de convention par lettre recommandée avec avis de réception le __/__/____, reçue le __/__/____.`
   );
 
   renderText(
@@ -1752,10 +1777,14 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
     "Après avoir constaté que le délai de réflexion prévu à l’article 229-4 du code civil était expiré, les époux, assistés de leurs conseils respectifs, ont confirmé leur intention de consentir mutuellement à leur divorce et ont apposé leurs signatures au bas des présentes."
   );
 
-  //TODO VARIABLE FROM AVOCAT
-  renderText(doc, "Fait à Paris, le " + moment().format("DD/MM/YY"));
+  renderSpacing(doc);
+  renderSpacing(doc);
+
+  renderText(doc, "Fait à Paris, le ");
 
   renderText(doc, "En 5 exemplaires originaux ");
+
+  renderSpacing(doc);
 
   doc.image(path.join() + "/pictures/ActeDAvocat.png", 270, null, {
     width: 60,
@@ -1763,6 +1792,7 @@ Les infractions prévues par le premier alinéa du présent article sont assimil
 
   //   doc.text("", null, 220);
 
+  renderSpacing(doc);
   renderBottomSignature(doc, form);
 
   doc.addPage();
@@ -1860,6 +1890,10 @@ async function generateAnnexePdf({ client }) {
   //   renderRightText(doc, `${client.email}`);
 
   doc.end();
+}
+
+function renderSpacing(doc) {
+  doc.moveDown(1);
 }
 
 function renderBottomSignature(doc, form) {
@@ -2104,6 +2138,23 @@ function calcDate(date1, date2) {
   message += years + " ans";
 
   return message;
+}
+
+function isVoyelle(string) {
+  if (!string) {
+    return false;
+  }
+  if (
+    string[0].toLowerCase() === "a" ||
+    string[0].toLowerCase() === "e" ||
+    string[0].toLowerCase() === "i" ||
+    string[0].toLowerCase() === "o" ||
+    string[0].toLowerCase() === "u" ||
+    string[0].toLowerCase() === "y"
+  ) {
+    return true;
+  }
+  return false;
 }
 
 module.exports = {
