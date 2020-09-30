@@ -49,6 +49,12 @@ export const wedding = {
       if: 3,
     },
     {
+      label: "Si oui, précisez la date de réception du contrat de mariage",
+      name: "weddingContratDate",
+      type: "date",
+      if: 4,
+    },
+    {
       label:
         "Si un contrat de mariage à été fait, quel à été le régime choisi ?",
       name: "weddingRegime",
@@ -58,12 +64,9 @@ export const wedding = {
         { label: "Communauté universelle", value: "universalCommunity" },
         { label: "Autres (préciser)", value: "other", information: true },
       ],
-      fullWidth: true,
       if: 4,
     },
-    {
-      type: "break",
-    },
+
     {
       label:
         "La première résidence commune des époux après le mariage a t-elle été fixé en france ?",
@@ -85,7 +88,12 @@ export const wedding = {
         "Si vous êtes déjà séparé, merci de préciser la date de la séparation éffective",
       name: "separationDate",
       type: "date",
-      fullWidth: true,
+    },
+    {
+      label:
+        "Si vous avez choisi une date de fin du mariage, merci de le préciser",
+      name: "dateEndWedding",
+      type: "date",
     },
     {
       type: "break",

@@ -21,6 +21,7 @@ import { debt } from "./FormObject/debt";
 import { bankAccount } from "./FormObject/bankAccount";
 import { realProperty } from "./FormObject/realProperty";
 import { aboutTaxes } from "./FormObject/aboutTaxes";
+import { annexes } from "./FormObject/annexes";
 
 function FolderForm() {
   const classes = useStyles();
@@ -41,6 +42,7 @@ function FolderForm() {
     bankAccount: {},
     realProperty: {},
     aboutTaxes: {},
+    annexes: {},
   });
 
   console.log(formInfo);
@@ -87,6 +89,7 @@ function FolderForm() {
     bankAccount,
     realProperty,
     aboutTaxes,
+    annexes,
   ];
 
   const [navState, setNavState] = useState(partArray[0].part.name);
@@ -102,6 +105,10 @@ function FolderForm() {
 
   useEffect(() => {
     topRef.current.scrollTo(0, 0);
+    postAuth("/folder/saveForm", {
+      id: id,
+      form: formInfo,
+    });
   }, [navState]);
 
   const topRef = useRef(null);

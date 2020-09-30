@@ -58,13 +58,100 @@ let FolderController = {
     }
 
     let docBuffer = await generateDoc({ form });
-    const fileDoc = await registerFile(req, res, folder, docBuffer, "doc");
+    const fileDoc = await registerFile(
+      req,
+      res,
+      folder,
+      docBuffer,
+      "doc",
+      "Convention de divorce par consentement mutuelle"
+    );
 
     let pdfBuffer = await generatePdf.generatePdf({ form });
-    const pdfFile = await registerFile(req, res, folder, pdfBuffer, "pdf");
+    const pdfFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfBuffer,
+      "pdf",
+      "Convention de divorce par consentement mutuelle"
+    );
 
-    folder.files.push(fileDoc._id);
+    let pdfHusbandFirstAnnexBuffer = await generatePdf.generateFirstAnnexePdf({
+      form,
+      client: form.first,
+      isMen: true,
+    });
+    const pdfHusbandFirstAnnexFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfHusbandFirstAnnexBuffer,
+      "pdf",
+      `Annexe convention de divorce ${form.first.lastname} ${form.first.firstname}`
+    );
+
+    let pdfWifeFirstAnnexBuffer = await generatePdf.generateFirstAnnexePdf({
+      form,
+      client: form.second,
+      isMen: false,
+    });
+    const pdfWifeFirstAnnexFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfWifeFirstAnnexBuffer,
+      "pdf",
+      `Annexe convention de divorce ${form.second.lastname} ${form.second.firstname}`
+    );
+
+    let pdfSecondAnnexBuffer = await generatePdf.generateSecondAnnexePdf({
+      form,
+    });
+    const pdfSecondAnnexFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfSecondAnnexBuffer,
+      "pdf",
+      `Annexe convention de divorce Mairie`
+    );
+
+    let pdfHusbandThirdAnnexBuffer = await generatePdf.generateThirdAnnexePdf({
+      form,
+      client: form.first,
+      isMen: true,
+    });
+    const pdfHusbandThirdAnnexFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfHusbandThirdAnnexBuffer,
+      "pdf",
+      `Attestation de divorce ${form.first.lastname} ${form.first.firstname}`
+    );
+
+    let pdfWifeThirdAnnexBuffer = await generatePdf.generateThirdAnnexePdf({
+      form,
+      client: form.second,
+      isMen: false,
+    });
+    const pdfWifeThirdAnnexFile = await registerFile(
+      req,
+      res,
+      folder,
+      pdfWifeThirdAnnexBuffer,
+      "pdf",
+      `Attestation de divorce ${form.second.lastname} ${form.second.firstname}`
+    );
+
+    // folder.files.push(fileDoc._id);
     folder.files.push(pdfFile._id);
+    folder.files.push(pdfHusbandFirstAnnexFile._id);
+    folder.files.push(pdfWifeFirstAnnexFile._id);
+    folder.files.push(pdfSecondAnnexFile._id);
+    folder.files.push(pdfHusbandThirdAnnexFile._id);
+    folder.files.push(pdfWifeThirdAnnexFile._id);
 
     await folder.save();
 
@@ -130,11 +217,11 @@ var s3 = new AWS.S3();
 
 const { Document, Packer, Paragraph, TextRun } = docx;
 
-async function registerFile(req, res, folder, buffer, type) {
+async function registerFile(req, res, folder, buffer, type, name) {
   const file = await new File({
     userId: req.user.id,
     folderId: folder._id,
-    name: "Convention de divorce par consentement mutuelle",
+    name: name,
     createdAt: new Date(),
     imported: false,
   });

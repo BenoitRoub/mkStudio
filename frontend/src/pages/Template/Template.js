@@ -9,7 +9,10 @@ function Template({ content, sidebar }) {
   return (
     <div className={classes.container}>
       <NavBar />
-      <div className={classes.content}>{content}</div>
+      <div className={classes.content}>
+        {content}
+        <div style={{ height: 120 }} />
+      </div>
       <SideBar>{sidebar}</SideBar>
     </div>
   );
@@ -27,6 +30,7 @@ const useStyles = makeStyles((theme) => {
       padding: "0 120px",
       paddingTop: theme.value.absoluteTop,
       borderRight: "3px solid " + theme.palette.faded,
+      overflow: "auto",
     },
   };
 });

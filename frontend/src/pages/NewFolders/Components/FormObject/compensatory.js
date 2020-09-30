@@ -35,5 +35,27 @@ export const compensatory = {
       name: "compensatoryParticipantAsk",
       if: 4,
     },
+    {
+      label: "Si oui de quel type est elle ?",
+      name: "isCompensatoryRente",
+      type: "radio",
+      radioFields: [
+        { label: "Rente", value: "true" },
+        { label: "Capital", value: "false" },
+      ],
+      if: 5,
+    },
+    {
+      label: "Si il s'agit d'une rente pour combien d'année",
+      type: "textfield",
+      name: "renteDuration",
+      if: 1,
+    },
+    {
+      label: "Si il s'agit d'une rente, quel est le montant de la mensualité",
+      type: "textfield",
+      name: "renteAmount",
+      if: 2,
+    },
   ],
 };

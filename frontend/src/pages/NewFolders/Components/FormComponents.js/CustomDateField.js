@@ -21,7 +21,11 @@ function CustomDateField({ part, field, handleWrite, formInfo }) {
           formInfo[part.name] ? formInfo[part.name][field.name] || null : ""
         }
         onChange={(e) => {
-          handleWrite(e._d, part.name, field.name);
+          if (e) {
+            handleWrite(e._d, part.name, field.name);
+          } else {
+            handleWrite("", part.name, field.name);
+          }
         }}
         KeyboardButtonProps={{
           "aria-label": "change date",

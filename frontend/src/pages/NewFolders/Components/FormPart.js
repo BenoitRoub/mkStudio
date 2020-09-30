@@ -5,13 +5,12 @@ import CustomTextField from "./FormComponents.js/CustomTextField";
 import CustomRadioField from "./FormComponents.js/CustomRadioField";
 import CustomDateField from "./FormComponents.js/CustomDateField";
 import CustomRadioParticipant from "./FormComponents.js/CustomRadioParticipant";
+import CustomCheckbox from "./FormComponents.js/CustomCheckbox";
 
 function FormPart({ handleWrite, formInfo, name }) {
   const classes = useStyles();
 
   const { part, fields } = name;
-
-  console.log(fields);
 
   return (
     <>
@@ -50,6 +49,19 @@ function FormPart({ handleWrite, formInfo, name }) {
                   formInfo={formInfo}
                 />
               )}
+
+              {field.type === "checkbox" && (
+                <React.Fragment>
+                  <CustomCheckbox
+                    part={part}
+                    field={field}
+                    handleWrite={handleWrite}
+                    formInfo={formInfo}
+                  />
+                  <div />
+                </React.Fragment>
+              )}
+
               {field.type === "radioParticipant" && (
                 <CustomRadioParticipant
                   part={part}

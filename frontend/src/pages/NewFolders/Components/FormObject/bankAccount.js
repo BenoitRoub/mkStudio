@@ -13,6 +13,7 @@ export const bankAccount = {
         { label: "Oui", value: "true" },
         { label: "Non", value: "false" },
       ],
+      fullWidth: true,
     },
     {
       type: "break",
@@ -24,6 +25,7 @@ export const bankAccount = {
     },
     {
       type: "break",
+      if: 3,
     },
     {
       label:

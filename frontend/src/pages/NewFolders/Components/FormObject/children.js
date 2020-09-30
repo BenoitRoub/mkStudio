@@ -66,7 +66,13 @@ export const children = {
       if: 10,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "children1IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 11,
     },
     {
@@ -109,7 +115,13 @@ export const children = {
       if: 18,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "children2IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 19,
     },
     {
@@ -152,7 +164,13 @@ export const children = {
       if: 26,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "children3IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 27,
     },
     {
@@ -194,10 +212,18 @@ export const children = {
       type: "textfield",
       if: 34,
     },
+
     {
-      type: "break",
+      label: "Sexe",
+      name: "children4IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 35,
     },
+
     {
       label: "Enfant 5 :",
       type: "text",
@@ -238,9 +264,16 @@ export const children = {
       if: 42,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "children5IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 43,
     },
+
     {
       label: "L'un des époux a-t-il des enfants issus d'une précedente union ?",
       name: "isPreviousChildren",
@@ -313,7 +346,13 @@ export const children = {
       if: 12,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant1children1IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 13,
     },
     {
@@ -356,7 +395,13 @@ export const children = {
       if: 20,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant1children2IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 21,
     },
     {
@@ -399,7 +444,13 @@ export const children = {
       if: 28,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant1children3IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 29,
     },
     {
@@ -451,7 +502,13 @@ export const children = {
       if: 38,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant2children1IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 39,
     },
     {
@@ -494,7 +551,13 @@ export const children = {
       if: 46,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant2children2IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 47,
     },
     {
@@ -537,7 +600,13 @@ export const children = {
       if: 54,
     },
     {
-      type: "break",
+      label: "Sexe",
+      name: "participant2children3IsBoy",
+      type: "radio",
+      radioFields: [
+        { label: "Garçon", value: "true" },
+        { label: "Fille", value: "false" },
+      ],
       if: 55,
     },
     {

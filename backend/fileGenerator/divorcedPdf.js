@@ -191,7 +191,7 @@ async function generatePdf({ form }) {
 
   doc.addPage();
 
-  if (form.wedding.consortForeignWeddingValidInFrance) {
+  if (form.wedding.consortForeignWeddingValidInFrance === "true") {
     renderBlueTitle(doc, "COMPETENCE INTERNATIONALE ET LOI APPLICABLE");
 
     renderText(
@@ -292,14 +292,14 @@ async function generatePdf({ form }) {
     }. `
   );
 
-  if (!form.wedding.isWeddingContrat) {
+  if (form.wedding.isWeddingContrat !== "true") {
     renderText(
       doc,
       "Ils n’ont pas fait précéder leur union d’un contrat de mariage."
     );
   }
 
-  if (form.wedding.isConsortForeign) {
+  if (form.wedding.isConsortForeign === "true") {
     renderText(
       doc,
       "Le régime matrimonial applicable aux époux est déterminé par la Convention de La Haye du 14 mars 1978."
@@ -376,7 +376,7 @@ async function generatePdf({ form }) {
     }
   }
 
-  if (!form.wedding.isWeddingContrat) {
+  if (form.wedding.isWeddingContrat !== "true") {
     renderText(
       doc,
       "Dès lors, les époux sont soumis au régime de la communauté de biens réduite aux acquêts."
@@ -409,7 +409,7 @@ async function generatePdf({ form }) {
     }
   }
 
-  if (!form.children.isChildren) {
+  if (form.children.isChildren !== "true") {
     renderText(
       doc,
       "Aucun enfant n’est né de cette union, ni d’une union précédente."
@@ -596,12 +596,12 @@ async function generatePdf({ form }) {
 
   renderIndentTitle(doc, "Sur le nom marital");
 
-  if (!form.maritalName.isUsingParticipantName) {
+  if (form.maritalName.isUsingParticipantName !== "true") {
     renderText(
       doc,
       `Madame ${form.second.birthname} n’a jamais pris le nom de son époux. `
     );
-  } else if (!form.maritalName.isAgreeToGiveHisName) {
+  } else if (form.maritalName.isAgreeToGiveHisName !== "true") {
     renderText(
       doc,
       `A la suite du divorce, les époux ont convenu que Madame ${form.second.lastname} ${form.second.birthname} reprendra l’usage de son nom de jeune fille.`
@@ -619,7 +619,7 @@ async function generatePdf({ form }) {
 
   renderIndentTitle(doc, "Sur la résidence");
 
-  if (!form.maritalHome.isLeavingTogether) {
+  if (form.maritalHome.isLeavingTogether !== "true") {
     renderText(
       doc,
       "Les époux conviennent de fixer leurs domiciles respectifs aux adresses suivantes : "
@@ -658,14 +658,14 @@ async function generatePdf({ form }) {
 
   renderIndentTitle(doc, "Sur les effets et vêtements personnels");
 
-  if (form.propertyDistribution.isPersonnalGoodTaken) {
+  if (form.propertyDistribution.isPersonnalGoodTaken === "true") {
     renderText(
       doc,
       "Les époux déclarent qu’ils ont repris possession de leurs vêtements et effets personnels et de ce chef, être remplis de leurs droits. "
     );
   }
 
-  if (form.propertyDistribution.isSharedVehicles) {
+  if (form.propertyDistribution.isSharedVehicles === "true") {
     const vehiclesArray = [];
     const vehicleLabelArray = ["first", "second", "third"];
     for (let label of vehicleLabelArray) {
@@ -763,13 +763,13 @@ async function generatePdf({ form }) {
   renderText(
     doc,
     `Compte tenu des dispositions des articles 270 et suivants du Code civil et eu égard aux éléments d’appréciation exprimés aux termes de l’article 271 dudit Code, il a été convenu entre les époux ${
-      !form.compensatory.isCompensatory ? "qu'aucune" : "qu'une"
+      form.compensatory.isCompensatory !== "true" ? "qu'aucune" : "qu'une"
     } prestation compensatoire${
-      !form.compensatory.isCompensatory ? " ne" : ""
+      form.compensatory.isCompensatory !== "true" ? " ne" : ""
     }  sera versée. `
   );
 
-  if (form.compensatory.isCompensatory) {
+  if (form.compensatory.isCompensatory === "true") {
     renderItallicBoldText(doc, "Rappel des éléments d’appréciation");
 
     renderText(
@@ -951,76 +951,78 @@ async function generatePdf({ form }) {
       }.`
     );
 
-    renderItallicBoldOutlineText(
-      doc,
-      "Les modalités de recouvrement de la prestation compensatoire sous forme de rente ou de rente viagère. -"
-    );
-
-    renderText(
-      doc,
-      "En cas de non-paiement de la prestation compensatoire sous forme de rente, le créancier dispose de plusieurs possibilités pour recouvrer les sommes dues : "
-    );
-
-    renderBulletPoint(doc, [
-      "La procédure de paiement direct des pensions alimentaires des articles L. 213-1 et suivants du Code des procédures civiles d’exécution Les frais de procédures sont à la charge du débiteur.",
-      "La procédure de saisine des rémunérations des articles R3252-11 et suivants du Code du travail si le débiteur est salarié.",
-      "Le débiteur peut aussi recourir à la procédure de recouvrement du Trésor public prévue par la loi n°75-618 du 11 juillet 1975 relative au recouvrement public des pensions alimentaires.",
-    ]),
+    if (form.compensatory.isCompensatoryRente === "false") {
       renderItallicBoldOutlineText(
         doc,
-        "La révision de la prestation compensatoire sous forme de rente ou de rente viagère. -"
+        "Les modalités de recouvrement de la prestation compensatoire sous forme de rente ou de rente viagère. -"
       );
 
-    renderText(
-      doc,
-      "La révision de la prestation compensatoire sous forme de rente est fixée aux articles suivants :"
-    );
+      renderText(
+        doc,
+        "En cas de non-paiement de la prestation compensatoire sous forme de rente, le créancier dispose de plusieurs possibilités pour recouvrer les sommes dues : "
+      );
 
-    renderItallicIndentOutlineText(doc, "Article 276-3 du Code civil :");
+      renderBulletPoint(doc, [
+        "La procédure de paiement direct des pensions alimentaires des articles L. 213-1 et suivants du Code des procédures civiles d’exécution Les frais de procédures sont à la charge du débiteur.",
+        "La procédure de saisine des rémunérations des articles R3252-11 et suivants du Code du travail si le débiteur est salarié.",
+        "Le débiteur peut aussi recourir à la procédure de recouvrement du Trésor public prévue par la loi n°75-618 du 11 juillet 1975 relative au recouvrement public des pensions alimentaires.",
+      ]),
+        renderItallicBoldOutlineText(
+          doc,
+          "La révision de la prestation compensatoire sous forme de rente ou de rente viagère. -"
+        );
 
-    renderItallicText(
-      doc,
-      "« La prestation compensatoire fixée sous forme de rente peut être révisée, suspendue ou supprimée en cas de changement important dans les ressources ou les besoins de l'une ou l'autre des parties."
-    );
+      renderText(
+        doc,
+        "La révision de la prestation compensatoire sous forme de rente est fixée aux articles suivants :"
+      );
 
-    renderItallicText(
-      doc,
-      "La révision ne peut avoir pour effet de porter la rente à un montant supérieur à celui fixé initialement par le juge. »"
-    );
+      renderItallicIndentOutlineText(doc, "Article 276-3 du Code civil :");
 
-    renderItallicIndentOutlineText(doc, "Article 276-4 du Code civil : ");
+      renderItallicText(
+        doc,
+        "« La prestation compensatoire fixée sous forme de rente peut être révisée, suspendue ou supprimée en cas de changement important dans les ressources ou les besoins de l'une ou l'autre des parties."
+      );
 
-    renderItallicText(
-      doc,
-      "« Le débiteur d'une prestation compensatoire sous forme de rente peut, à tout moment, saisir le juge d'une demande de substitution d'un capital à tout ou partie de la rente. La substitution s'effectue selon des modalités fixées par décret en Conseil d'Etat. "
-    );
+      renderItallicText(
+        doc,
+        "La révision ne peut avoir pour effet de porter la rente à un montant supérieur à celui fixé initialement par le juge. »"
+      );
 
-    renderItallicText(
-      doc,
-      "Le créancier de la prestation compensatoire peut former la même demande s'il établit qu'une modification de la situation du débiteur permet cette substitution, notamment lors de la liquidation du régime matrimonial. "
-    );
+      renderItallicIndentOutlineText(doc, "Article 276-4 du Code civil : ");
 
-    renderItallicText(
-      doc,
-      "Les modalités d'exécution prévues aux articles 274, 275 et 275-1 sont applicables. Le refus du juge de substituer un capital à tout ou partie de la rente doit être spécialement motivé. »"
-    );
+      renderItallicText(
+        doc,
+        "« Le débiteur d'une prestation compensatoire sous forme de rente peut, à tout moment, saisir le juge d'une demande de substitution d'un capital à tout ou partie de la rente. La substitution s'effectue selon des modalités fixées par décret en Conseil d'Etat. "
+      );
 
-    renderItallicBoldOutlineText(
-      doc,
-      "Les sanctions pénales encourues en cas de défaillance : délit d’abandon de famille. -"
-    );
+      renderItallicText(
+        doc,
+        "Le créancier de la prestation compensatoire peut former la même demande s'il établit qu'une modification de la situation du débiteur permet cette substitution, notamment lors de la liquidation du régime matrimonial. "
+      );
 
-    renderItallicIndentOutlineText(doc, "Article 227-3 du Code pénal : ");
+      renderItallicText(
+        doc,
+        "Les modalités d'exécution prévues aux articles 274, 275 et 275-1 sont applicables. Le refus du juge de substituer un capital à tout ou partie de la rente doit être spécialement motivé. »"
+      );
 
-    renderItallicText(
-      doc,
-      "«Le fait, pour une personne, de ne pas exécuter une décision judiciaire, une convention judiciairement homologuée ou une convention prévue à l'article 229-1 du code civil lui imposant de verser au profit d'un enfant mineur, d'un descendant, d'un ascendant ou du conjoint une pension, une contribution, des subsides ou des prestations de toute nature dues en raison de l'une des obligations familiales prévues par le code civil, en demeurant plus de deux mois sans s'acquitter intégralement de cette obligation, est puni de deux ans d'emprisonnement et de 15 000 euros d'amende."
-    );
+      renderItallicBoldOutlineText(
+        doc,
+        "Les sanctions pénales encourues en cas de défaillance : délit d’abandon de famille. -"
+      );
 
-    renderItallicText(
-      doc,
-      "Les infractions prévues par le premier alinéa du présent article sont assimilées à des abandons de famille pour l'application du 3° de l'article 373 du code civil. »"
-    );
+      renderItallicIndentOutlineText(doc, "Article 227-3 du Code pénal : ");
+
+      renderItallicText(
+        doc,
+        "«Le fait, pour une personne, de ne pas exécuter une décision judiciaire, une convention judiciairement homologuée ou une convention prévue à l'article 229-1 du code civil lui imposant de verser au profit d'un enfant mineur, d'un descendant, d'un ascendant ou du conjoint une pension, une contribution, des subsides ou des prestations de toute nature dues en raison de l'une des obligations familiales prévues par le code civil, en demeurant plus de deux mois sans s'acquitter intégralement de cette obligation, est puni de deux ans d'emprisonnement et de 15 000 euros d'amende."
+      );
+
+      renderItallicText(
+        doc,
+        "Les infractions prévues par le premier alinéa du présent article sont assimilées à des abandons de famille pour l'application du 3° de l'article 373 du code civil. »"
+      );
+    }
   }
 
   renderIndentTitle(doc, "Sur les impôts");
@@ -1067,8 +1069,7 @@ async function generatePdf({ form }) {
     }.`
   );
 
-  //QUESTION LIQUIDATION
-  if (!form.wedding.isWeddingContrat && true) {
+  if (form.wedding.isWeddingContrat !== "true") {
     renderText(
       doc,
       "Ils n’ont pas fait précéder leur union d’un contrat de mariage. Dès lors, les époux sont soumis au régime de la communauté de biens réduite aux acquêts. "
@@ -1103,7 +1104,7 @@ async function generatePdf({ form }) {
       "Qu'ils ont chacun repris chacun l'ensemble de leurs effets personnels ;",
     ];
 
-    if (!form.debt.isDebtOrCredits) {
+    if (form.debt.isDebtOrCredits !== "true") {
       arrayIsDebtWedding.push(
         "Qu'ils ont procédé au partage amiable des meubles communs meublant le domicile conjugal, sans valeur vénale ;"
       );
@@ -1126,7 +1127,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.wedding.isWeddingContrat) {
+  if (form.wedding.isWeddingContrat === "true") {
     renderText(
       doc,
       `Les époux ont opté pour le régime de la séparation de biens, selon contrat reçu le ${
@@ -1138,11 +1139,16 @@ async function generatePdf({ form }) {
           : ""
       }, étude notariale située ${form.wedding.weddingContratNotaryAdress}.`
     );
-  } else if (true) {
-    //QUESTION nom du notaire de liquidation ???? TODO
+  } else {
     renderText(
       doc,
-      `Les parties ont confié à l’Etude notariale ${form.wedding.weddingContratNotary} le soin d’établir un acte de liquidation et partage de leur régime matrimonial, lequel a été régularisé en date du [date] annexé à la présente convention et faisant corps avec elle.`
+      `Les parties ont confié à l’Etude notariale ${
+        form.annexes.notaryName
+      } le soin d’établir un acte de liquidation et partage de leur régime matrimonial, lequel a été régularisé en date du ${moment(
+        form.annexes.liquidationDate
+      ).format(
+        "DD/MM/YYYY"
+      )} annexé à la présente convention et faisant corps avec elle.`
     );
 
     renderText(
@@ -1156,7 +1162,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.debt.isDebtOrCredits) {
+  if (form.debt.isDebtOrCredits === "true") {
     renderIndentTitle(doc, "Sur le passif de communauté");
 
     renderText(doc, "Les époux ont contracté un crédit auprès de ");
@@ -1197,12 +1203,12 @@ async function generatePdf({ form }) {
     }
 
     //QUESTION
-    renderText(
-      doc,
-      `Monsieur «Homme_Nom_de_Famille» a contracté un crédit auprès de :
-        DANS LE FORMULAIRE LES DETTES SONT MUTALISéS
-    `
-    );
+    // renderText(
+    //   doc,
+    //   `Monsieur «Homme_Nom_de_Famille» a contracté un crédit auprès de :
+    //     DANS LE FORMULAIRE LES DETTES SONT MUTALISéS
+    // `
+    // );
 
     renderText(
       doc,
@@ -1210,7 +1216,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.children.isChildren) {
+  if (form.children.isChildren === "true") {
     renderBlueTitle(doc, "CONVENTION RELATIVE AUX ENFANTS");
 
     renderIndentTitle(doc, "Sur l’autorité parentale");
@@ -1274,7 +1280,7 @@ Tout changement de résidence de l'un des parents, dès lors qu'il modifie les m
 
     renderIndentTitle(doc, `Sur la fixation de la résidence des enfants`);
 
-    if (form.children.sharedChildrenGuardAgreement) {
+    if (form.children.sharedChildrenGuardAgreement === "true") {
       renderText(
         doc,
         `D’un commun accord, la résidence habituelle des enfants est fixée au domicile de ${
@@ -1378,7 +1384,7 @@ Tout changement de résidence de l'un des parents, dès lors qu'il modifie les m
       `Sur la contribution à l’entretien et l’éducation des enfants`
     );
 
-    if (form.children.isAlimony) {
+    if (form.children.isAlimony === "true") {
       renderText(
         doc,
         `Les époux conviennent d’une contribution à l’entretien et l’éducation des enfants à la charge de ${
@@ -1618,23 +1624,22 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
     `A cet effet, seront annexés aux présentes les justificatifs d'envois par lettre recommandée avec avis de réception.`
   );
 
-  //QUESTION qui est le notaire à envoyer TODO VARIABLE
   renderText(
     doc,
-    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, est expressément désigné pour adresser à Maître «Notaire_prénom_et_nom», Notaire, la convention de divorce et ses annexes aux fins de dépôt au rang de ses minutes, dans le délai de sept jours suivant la date de la signature de la convention par les époux ${form.first.lastname}-${form.second.lastname} et leurs avocats. `
+    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, est expressément désigné pour adresser à Maître ${form.annexes.notaryName}, Notaire, la convention de divorce et ses annexes aux fins de dépôt au rang de ses minutes, dans le délai de sept jours suivant la date de la signature de la convention par les époux ${form.first.lastname}-${form.second.lastname} et leurs avocats. `
   );
 
   renderText(
     doc,
     `Le mariage prendra fin, par l'effet de la présente convention, au jour du dépôt au rang des minutes du Notaire qui donnera force exécutoire et date certaine à la convention, et ce conformément aux dispositions des articles 260, 1° et 229-1 alinéas 2 et 3 du Code Civil.`
   );
-  //QUESTION qui est le notaire à envoyer TODO VARIABLE
+
   renderText(
     doc,
-    `Maître «Notaire_prénom_et_nom», Notaire,  délivrera une attestation de dépôt à chaque partie`
+    `Maître ${form.annexes.notaryName}, Notaire,  délivrera une attestation de dépôt à chaque partie`
   );
 
-  if (form.wedding.isConsortForeign) {
+  if (form.wedding.isConsortForeign === "true") {
     renderBlueTitle(
       doc,
       `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`
@@ -1799,25 +1804,59 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderCenterBoldText(doc, "ANNEXES");
 
-  let arrayAnnex = [
-    `Copie de la carte d’identité de Madame ${épouseNom}`,
-    `Copie de la carte d’identité de Monsieur ${form.first.lastname}`,
-    `Copie du livret de famille`,
-    `Original de l’extrait d’acte de mariage`,
-    `Original de l’extrait d’acte de naissance de Madame ${épouseNom}`,
-    `Original de l’extrait d’acte de naissance de Monsieur ${form.first.lastname}`,
-  ];
+  let arrayAnnex = [];
 
-  if (form.children.isChildren || form.children.isPreviousChildren) {
+  if (form.annexes.copyIdentityFirstConsort) {
+    arrayAnnex.push(
+      `Copie de la carte d’identité de Monsieur ${form.first.lastname}`
+    );
+  }
+  if (form.annexes.copyIdentitySecondConsort) {
+    arrayAnnex.push(`Copie de la carte d’identité de Madame ${épouseNom}`);
+  }
+  if (form.annexes.copyFamilyBook) {
+    arrayAnnex.push(`Copie du livret de famille`);
+  }
+  if (form.annexes.orignalWeddingExtract) {
+    arrayAnnex.push(`Original de l’extrait d’acte de mariage`);
+  }
+  if (form.annexes.orignalBirthExtractFirstConsort) {
+    arrayAnnex.push(
+      `Original de l’extrait d’acte de naissance de Monsieur ${form.first.lastname}`
+    );
+  }
+  if (form.annexes.orignalBirthExtractSecondConsort) {
+    arrayAnnex.push(
+      `Original de l’extrait d’acte de naissance de Madame ${épouseNom}`
+    );
+  }
+  if (
+    form.annexes.orignalBirthExtractChildren &&
+    (form.children.isChildren === "true" ||
+      form.children.isPreviousChildren === "true")
+  ) {
     arrayAnnex.push(`Original des extraits d’actes de naissance des enfants`);
   }
-
-  arrayAnnex = [
-    ...arrayAnnex,
-    `Preuve de dépôt et de réception de l’envoi du projet de convention de divorce par l’Avocat de Madame ${épouseNom} `,
-    `Preuve de dépôt et de réception de l’envoi du projet de convention de divorce par l’Avocat de Monsieur ${form.first.lastname}`,
-    `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`,
-  ];
+  if (form.annexes.proofOfDepositeDivorceConventionSecondConsort) {
+    arrayAnnex.push(
+      `Preuve de dépôt et de réception de l’envoi du projet de convention de divorce par l’Avocat de Madame ${épouseNom} `
+    );
+  }
+  if (form.annexes.proofOfDepositeDivorceConventionFirstConsort) {
+    arrayAnnex.push(
+      `Preuve de dépôt et de réception de l’envoi du projet de convention de divorce par l’Avocat de Monsieur ${form.first.lastname}`
+    );
+  }
+  if (form.annexes.proofOfConsentementAR) {
+    arrayAnnex.push(
+      `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`
+    );
+  }
+  if (form.annexes.proofOfConsentementAR) {
+    arrayAnnex.push(
+      `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`
+    );
+  }
 
   let countChildrenSharedNot7 = 0;
   let date7yearsAgo = new Date();
@@ -1830,22 +1869,26 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
       countChildrenSharedNot7++;
     }
   }
-  if (countChildrenSharedNot7 > 0) {
+
+  if (form.annexes.formDiscernementChildren && countChildrenSharedNot7 > 0) {
     arrayAnnex.push(
       `Formulaire d’information de l’enfant doué de discernement`
     );
   }
 
-  if (form.realProperty.isRealProperty) {
+  if (form.annexes.art272 && form.realProperty.isRealProperty === "true") {
     arrayAnnex.push(`Attestations art. 272 du Code civil`);
   }
 
   //QUESTION LIQUIDATION
-  if (true) {
+  if (form.annexes.stateLiquidatif) {
     arrayAnnex.push(`Etat liquidatif `);
   }
 
-  if (form.wedding.isWeddingContrat) {
+  if (
+    form.annexes.copyWeddingContrat &&
+    form.wedding.isWeddingContrat === "true"
+  ) {
     arrayAnnex.push(`Copie du contrat de mariage `);
   }
 
@@ -1867,29 +1910,345 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
   return buffer;
 }
 
-async function generateAnnexePdf({ client }) {
-  const user = await User.findOne();
-  const folder = await Folder.findById(user.folders[0]);
-  const form = folder.form;
-
+async function generateFirstAnnexePdf({ form, client, isMen }) {
   const doc = new PDFDocument();
   const fs = require("fs");
+
+  const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+
+  const husbandName = `${form.first.birthname} ${form.first.lastname}`;
+
   // Pipe its output somewhere, like to a file or HTTP response
   // See below for browser usage
-  doc.pipe(fs.createWriteStream("outputAnnexe.pdf"));
+  const random = Math.floor(Math.random() * (100000000 - 0)) + 1;
+  const stream = doc.pipe(
+    fs.createWriteStream(
+      "doc/pdf/" +
+        random +
+        `${isMen ? "Monsieur" : "Madame"}` +
+        "outputFirstAnnexes.pdf"
+    )
+  );
 
   //ARNAUD SARRAILHé
 
-  renderRightTextBold(doc, `${client.gender}`);
+  renderCenterText(doc, "ARNAUD SARRAILHÉ");
+  renderCenterText(doc, "AVOCAT AU BARREAU DE PARIS");
+
+  doc.moveDown(2);
+  renderRightTextBold(doc, `${isMen ? "Monsieur" : "Madame"}`);
   renderRightTextBold(doc, `${client.firstname}`);
   renderRightTextBold(doc, `${client.lastname} ${client.birthname}`);
   renderRightText(doc, `${client.adress}`);
   renderRightText(doc, `${client.zipCode} ${client.city}`);
 
-  //   renderRightTextBold(doc, `PAR LRAR ELECTRONIQUE : `);
-  //   renderRightText(doc, `${client.email}`);
+  doc.moveDown(1);
+
+  renderRightTextBoldUnderline(doc, `PAR LRAR ELECTRONIQUE : `);
+  renderRightText(doc, `${client.email}`);
+
+  doc.moveDown(1);
+  renderRightText(doc, `Paris, le`);
+
+  doc.moveDown(1);
+
+  renderBoldText(doc, `N/Réf : Epoux ${épouseNom} - ${husbandName} /Divorce`);
+
+  doc.moveDown(1);
+  renderBoldOutlineText(
+    doc,
+    `Objet : Notification par LRAR de la convention de divorce – délai de 15 jours`
+  );
+
+  doc.moveDown(1);
+
+  renderText(doc, `${isMen ? "Cher Monsieur" : "Chère Madame"}`);
+
+  renderText(
+    doc,
+    `Je vous prie de trouver sous ce pli un projet de convention de divorce par consentement mutuel sous signature privée contresigné par avocats et déposé au rang des minutes d’un notaire, tel qu’il résulte de l’accord conclu avec votre conjoint.`
+  );
+
+  renderText(
+    doc,
+    `J’attire votre attention sur l’importance des engagements souscrits.`
+  );
+
+  renderText(
+    doc,
+    `Cette convention, une fois signée par vous-même et votre conjoint, sera contresignée par les avocats de chacun d’entre vous.`
+  );
+
+  renderText(
+    doc,
+    `Cet acte d’avocat constatera votre accord pour divorcer et fixera les effets tant à l’égard de vous-même, qu’à l’égard de vos enfants.`
+  );
+
+  renderText(
+    doc,
+    `C’est pourquoi par application de l’article 229-4 du code civil, le présent projet de convention vous est adressé par lettre recommandée avec accusé de réception.`
+  );
+
+  renderText(
+    doc,
+    `Vous ne pourrez signer cet acte d’avocat de divorce en mon cabinet en présence de votre conjoint et de son avocat qu’à l’expiration d’un délai de réflexion de 15 jours.`
+  );
+
+  renderText(
+    doc,
+    `Ce délai commence à courir au jour de la réception de la présente lettre recommandée.`
+  );
+
+  renderText(
+    doc,
+    `Une fois la signature de chacun des époux apposée, cet acte sera contresigné par chacun des avocats dans les formes et avec les conséquences de l’article 1374 du code civil.`
+  );
+
+  renderText(
+    doc,
+    `Votre convention sera adressée au notaire, dans un délai de 7 jours à compter des signatures et contreseings.`
+  );
+
+  renderText(
+    doc,
+    `Votre engagement commun sera alors irrévocable, sauf nouvel accord avec votre conjoint pour y renoncer ou pour les causes que la loi autorise.`
+  );
+
+  renderText(
+    doc,
+    `En cas de renoncement conjoint, par application de l’article 1148-2 du code de procédure civile, vous avez la possibilité, jusqu’au dépôt de la convention de divorce au rang des minutes du notaire, de saisir la juridiction d’une demande de séparation de corps ou de divorce judiciaire dans les conditions prévues aux articles 1106 et 1107 du même code.`
+  );
+
+  renderText(
+    doc,
+    `Le notaire devra être informé de votre renonciation par tout moyen.`
+  );
+
+  renderText(
+    doc,
+    `A défaut, le notaire délivrera une attestation de dépôt de l’acte d’avocat de divorce dans un délai de 15 jours.`
+  );
+
+  renderText(
+    doc,
+    `Je vous prie d’agréer, ${
+      isMen ? "Cher Monsieur" : "Chère Madame"
+    } , l’expression de mes sentiments dévoués et distingués.`
+  );
+
+  doc.moveDown(2);
+
+  renderRightText(doc, "Arnaud Sarrailhé");
+
+  doc.moveDown(3);
+
+  renderText(doc, "PJ : Convention de divorce");
 
   doc.end();
+
+  const buffer = await new Promise((resolve, reject) => {
+    stream.on("finish", async function () {
+      fs.readFile(
+        "doc/pdf/" +
+          random +
+          `${isMen ? "Monsieur" : "Madame"}` +
+          "outputFirstAnnexes.pdf",
+        function (err, data) {
+          fs.unlink(
+            "doc/pdf/" +
+              random +
+              `${isMen ? "Monsieur" : "Madame"}` +
+              "outputFirstAnnexes.pdf",
+            function (err) {
+              console.log(err);
+            }
+          );
+          resolve(data);
+        }
+      );
+    });
+  });
+  return buffer;
+}
+
+async function generateSecondAnnexePdf({ form }) {
+  const doc = new PDFDocument();
+  const fs = require("fs");
+
+  const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+
+  const husbandName = `${form.first.birthname} ${form.first.lastname}`;
+
+  // Pipe its output somewhere, like to a file or HTTP response
+  // See below for browser usage
+  const random = Math.floor(Math.random() * (100000000 - 0)) + 1;
+  const stream = doc.pipe(
+    fs.createWriteStream("doc/pdf/" + random + "outputSecondAnnexes.pdf")
+  );
+
+  //ARNAUD SARRAILHé
+
+  renderCenterText(doc, "ARNAUD SARRAILHÉ");
+  renderCenterText(doc, "AVOCAT AU BARREAU DE PARIS");
+
+  doc.moveDown(2);
+  renderRightTextBold(doc, `Mairie de ${form.wedding.weddingLocation}`);
+  renderRightText(doc, `Sercie de l'état civil`);
+
+  doc.moveDown(1);
+
+  doc.moveDown(1);
+  renderRightText(doc, `Paris, le`);
+
+  doc.moveDown(1);
+
+  renderText(doc, `N/Réf : Epoux ${épouseNom} - ${husbandName} /Divorce`);
+
+  doc.moveDown(1);
+  renderBoldOutlineText(
+    doc,
+    `Objet : Transcription divorce par consentement mutuel`
+  );
+
+  doc.moveDown(1);
+
+  renderText(doc, `Madame, Monsieur`);
+
+  renderText(
+    doc,
+    `Je vous prie de bien vouloir trouver ci-joint une attestation d’enregistrement par notaire de la convention de divorce concernant les époux ${form.first.lastname} - ${form.second.birthname}`
+  );
+
+  renderText(
+    doc,
+    `Je vous remercie de bien vouloir porter mention de ce divorce sur les registres d’état civil.`
+  );
+
+  renderText(
+    doc,
+    `Je vous prie d’agréer, Madame, Monsieur, l’expression de mes sentiments dévoués et distingués.`
+  );
+
+  doc.moveDown(2);
+
+  renderRightText(doc, "Arnaud Sarrailhé");
+
+  doc.moveDown(3);
+
+  renderText(doc, "PJ : Convention de divorce");
+
+  doc.end();
+
+  const buffer = await new Promise((resolve, reject) => {
+    stream.on("finish", async function () {
+      fs.readFile("doc/pdf/" + random + "outputSecondAnnexes.pdf", function (
+        err,
+        data
+      ) {
+        fs.unlink("doc/pdf/" + random + "outputSecondAnnexes.pdf", function (
+          err
+        ) {
+          console.log(err);
+        });
+        resolve(data);
+      });
+    });
+  });
+  return buffer;
+}
+
+async function generateThirdAnnexePdf({ form, client, isMen }) {
+  const doc = new PDFDocument();
+  const fs = require("fs");
+
+  const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+
+  const husbandName = `${form.first.birthname} ${form.first.lastname}`;
+
+  // Pipe its output somewhere, like to a file or HTTP response
+  // See below for browser usage
+  const random = Math.floor(Math.random() * (100000000 - 0)) + 1;
+  const stream = doc.pipe(
+    fs.createWriteStream(
+      "doc/pdf/" + random + isMen
+        ? "Husband"
+        : "Wife" + "outputThirdAnnexes.pdf"
+    )
+  );
+
+  //ARNAUD SARRAILHé
+
+  renderCenterText(doc, "ARNAUD SARRAILHÉ");
+  renderCenterText(doc, "AVOCAT AU BARREAU DE PARIS");
+
+  doc.moveDown(2);
+  renderRightTextBold(doc, `${isMen ? "Monsieur" : "Madame"}`);
+  renderRightTextBold(doc, `${client.firstname}`);
+  renderRightTextBold(doc, `${client.lastname} ${client.birthname}`);
+  renderRightText(doc, `${client.adress}`);
+  renderRightText(doc, `${client.zipCode} ${client.city}`);
+
+  doc.moveDown(1);
+
+  doc.moveDown(1);
+  renderRightText(doc, `Paris, le`);
+
+  doc.moveDown(1);
+
+  renderText(doc, `N/Réf : Epoux ${épouseNom} - ${husbandName} /Divorce`);
+
+  doc.moveDown(1);
+  renderBoldOutlineText(doc, `Objet : Attestation de divorce`);
+
+  doc.moveDown(1);
+
+  renderText(doc, `${isMen ? "Cher Monsieur" : "Chère Madame"}`);
+
+  renderText(
+    doc,
+    `Je vous prie de bien vouloir trouver ci-joint l’attestation de divorce délivrée par le notaire dans le cadre de votre divorce par consentement mutuel.`
+  );
+
+  renderText(
+    doc,
+    `Veillez à conserver précieusement de document, qui constitue la preuve que vous êtes bien divorcé.`
+  );
+
+  renderText(doc, `Je vous en souhaite bonne réception.`);
+
+  renderText(doc, `Bien cordialement,`);
+
+  doc.moveDown(2);
+
+  renderRightText(doc, "Arnaud Sarrailhé");
+
+  doc.moveDown(3);
+
+  renderText(doc, "PJ : Attestation");
+
+  doc.end();
+
+  const buffer = await new Promise((resolve, reject) => {
+    stream.on("finish", async function () {
+      fs.readFile(
+        "doc/pdf/" + random + isMen
+          ? "Husband"
+          : "Wife" + "outputThirdAnnexes.pdf",
+        function (err, data) {
+          fs.unlink(
+            "doc/pdf/" + random + isMen
+              ? "Husband"
+              : "Wife" + "outputThirdAnnexes.pdf",
+            function (err) {
+              console.log(err);
+            }
+          );
+          resolve(data);
+        }
+      );
+    });
+  });
+  return buffer;
 }
 
 function renderSpacing(doc) {
@@ -1961,6 +2320,12 @@ function renderCenterBoldText(doc, text) {
     .moveDown(2);
 }
 
+function renderCenterText(doc, text) {
+  doc.fontSize(14).font("Times-Bold").fillColor("#000").text(text, {
+    align: "center",
+  });
+}
+
 function renderText(doc, text) {
   doc
     .fontSize(12)
@@ -1977,16 +2342,31 @@ function renderRightText(doc, text) {
     .fontSize(12)
     .font("Times-Roman")
     .fillColor("#000")
-    .text(text, 400)
-    .moveDown(0.5);
+    .text(text, 350)
+    .moveDown(0.5)
+    .text("", 100);
 }
 
 function renderRightTextBold(doc, text) {
   doc
-    .font("Times-Roman")
+    .fontSize(12)
+    .font("Times-Bold")
     .fillColor("#000")
-    .text(text, 400, null, { bold: true })
-    .moveDown(0.5);
+    .text(text, 350)
+    .moveDown(0.5)
+    .text("", 100);
+}
+
+function renderRightTextBoldUnderline(doc, text) {
+  doc
+    .fontSize(12)
+    .font("Times-Bold")
+    .fillColor("#000")
+    .text(text, 350, null, {
+      underline: true,
+    })
+    .moveDown(0.5)
+    .text("", 100);
 }
 
 function renderBulletPoint(doc, pointArray) {
@@ -2158,6 +2538,8 @@ function isVoyelle(string) {
 }
 
 module.exports = {
-  generateAnnexePdf,
+  generateFirstAnnexePdf,
+  generateSecondAnnexePdf,
+  generateThirdAnnexePdf,
   generatePdf,
 };
