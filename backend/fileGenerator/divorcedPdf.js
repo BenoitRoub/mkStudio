@@ -209,6 +209,8 @@ async function generatePdf({ form }) {
       "De sorte qu’il est nécessaire de justifier la compétence internationale des autorités françaises et de déterminer la loi applicable."
     );
 
+    if (form.wedding.isConsortForeign  === "true"){
+
     renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
 
     renderText(
@@ -260,7 +262,7 @@ async function generatePdf({ form }) {
 
     renderText(
       doc,
-      "Les époux «Homme_Nom_de_Famille»-«Femme_Nom_de_jeune_fille» n’ayant pas choisi préalablement à la rédaction de la présente convention la loi applicable à leur divorce, l’article 8 prévoit que la loi applicable est: "
+      `Les époux ${form.first.lastname}-${form.second.birthname} n’ayant pas choisi préalablement à la rédaction de la présente convention la loi applicable à leur divorce, l’article 8 prévoit que la loi applicable est: `
     );
 
     renderTextTiret(doc, "la loi de la résidence habituelle commune des époux");
@@ -277,7 +279,8 @@ async function generatePdf({ form }) {
       doc,
       `En l’espèce, la loi française est applicable au prononcé du divorce, dans la mesure où il s’agit de la loi de la résidence habituelle commune des époux «Homme_Nom_de_Famille»-«Femme_Nom_de_jeune_fille»`
     );
-  }
+    }
+}
 
   renderBlueTitle(doc, "DÉCLARATION DES ÉPOUX");
 
@@ -629,7 +632,7 @@ async function generatePdf({ form }) {
       `Madame ${form.second.lastname} ${form.second.birthname} est domiciliée ${form.second.adress}`,
       `Monsieur ${form.first.lastname} est domicilié ${form.first.adress}`,
     ]);
-  } else {
+  } else if (form.maritalHome.maritalHomeStatus === "A") {
     renderText(
       doc,
       `Les époux sont encore domiciliés au domicile conjugal, en location, à la date de la signature des présentes, sis ${form.first.adress}.`
@@ -951,7 +954,7 @@ async function generatePdf({ form }) {
       }.`
     );
 
-    if (form.compensatory.isCompensatoryRente === "false") {
+    if (form.compensatory.isCompensatoryRente === "true") {
       renderItallicBoldOutlineText(
         doc,
         "Les modalités de recouvrement de la prestation compensatoire sous forme de rente ou de rente viagère. -"
@@ -1074,6 +1077,7 @@ async function generatePdf({ form }) {
       doc,
       "Ils n’ont pas fait précéder leur union d’un contrat de mariage. Dès lors, les époux sont soumis au régime de la communauté de biens réduite aux acquêts. "
     );
+  }
 
     renderText(
       doc,
@@ -1106,7 +1110,7 @@ async function generatePdf({ form }) {
 
     if (form.debt.isDebtOrCredits !== "true") {
       arrayIsDebtWedding.push(
-        "Qu'ils ont procédé au partage amiable des meubles communs meublant le domicile conjugal, sans valeur vénale ;"
+        "Qu'ils n'ont contracté aucune dette susceptible d'entraîner la solidarité passive de l'autre époux sur le fondement de l'article 220 du Code civil ;"
       );
     }
     arrayIsDebtWedding = [
@@ -1125,7 +1129,7 @@ async function generatePdf({ form }) {
       doc,
       `En conséquence, Monsieur ${form.first.lastname} et Madame ${épouseNom} renoncent à élever à l’avenir toutes réclamations ou contestations relatives à la liquidation et au partage intervenu entre eux ou à faire valoir la moindre créance, indemnité ou compensation dans le cadre des droits qu’ils avaient ou auraient pu tenir de leur régime matrimonial.`
     );
-  }
+  
 
   if (form.wedding.isWeddingContrat === "true") {
     renderText(
@@ -1162,7 +1166,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.debt.isDebtOrCredits === "true") {
+  if (form.debt.isDebtsOrCredits === "true") {
     renderIndentTitle(doc, "Sur le passif de communauté");
 
     renderText(doc, "Les époux ont contracté un crédit auprès de ");
@@ -1543,7 +1547,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
       `Sur le rattachement administratif et fiscal des enfants
 `
     );
-
+//  TODO IMORTANT
     if (sharedChildrenNumber === 1) {
       renderText(
         doc,
