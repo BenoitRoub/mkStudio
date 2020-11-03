@@ -30,7 +30,6 @@ function Authorisation(props) {
     (err) => {
       if (err?.response?.status === 401) {
         eraseCookie("token");
-        history.push("/login");
       }
       return err;
     }
