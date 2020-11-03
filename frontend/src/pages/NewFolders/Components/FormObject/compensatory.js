@@ -47,7 +47,8 @@ export const compensatory = {
     },
     {
       label: "Si il s'agit d'une rente pour combien d'année",
-      type: "textfield",
+      type: "select",
+      options: [1,2,3,4,5,6,7,8],
       name: "renteDuration",
       if: 1,
     },

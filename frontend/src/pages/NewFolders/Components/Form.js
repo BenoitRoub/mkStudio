@@ -45,7 +45,6 @@ function FolderForm() {
     annexes: {},
   });
 
-  console.log(formInfo);
 
   useEffect(() => {
     if (id && folderContext.folders) {
@@ -113,7 +112,6 @@ function FolderForm() {
 
   const topRef = useRef(null);
 
-  console.log(formInfo);
 
   return (
     <div className={classes.formContainer} ref={topRef}>
@@ -178,7 +176,7 @@ const useStyles = makeStyles((theme) => {
       marginTop: "-" + theme.value.absoluteTop,
       paddingTop: theme.value.absoluteTop,
       maxHeight: `calc(100vh - ${theme.value.absoluteTop})`,
-      overflowY: "auto",
+      // overflowY: "auto",
       "&::-webkit-scrollbar": {
         width: "0.4em",
       },

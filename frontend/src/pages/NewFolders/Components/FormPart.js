@@ -6,6 +6,7 @@ import CustomRadioField from "./FormComponents.js/CustomRadioField";
 import CustomDateField from "./FormComponents.js/CustomDateField";
 import CustomRadioParticipant from "./FormComponents.js/CustomRadioParticipant";
 import CustomCheckbox from "./FormComponents.js/CustomCheckbox";
+import CustomSelect from "./FormComponents.js/CustomSelect";
 
 function FormPart({ handleWrite, formInfo, name }) {
   const classes = useStyles();
@@ -24,7 +25,6 @@ function FormPart({ handleWrite, formInfo, name }) {
           !field.if ||
           formInfo[part.name][fields[index - field.if].name] === "true" ? (
             <>
-              {console.log(field.if)}
               {field.type === "textfield" && (
                 <CustomTextField
                   part={part}
@@ -43,6 +43,15 @@ function FormPart({ handleWrite, formInfo, name }) {
               )}
               {field.type === "radio" && (
                 <CustomRadioField
+                  part={part}
+                  field={field}
+                  handleWrite={handleWrite}
+                  formInfo={formInfo}
+                />
+              )}
+
+{field.type === "select" && (
+                <CustomSelect
                   part={part}
                   field={field}
                   handleWrite={handleWrite}

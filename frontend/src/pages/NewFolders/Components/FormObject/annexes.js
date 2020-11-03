@@ -12,9 +12,21 @@ export const annexes = {
       type: "textfield",
     },
     {
+      label:
+        "Quel est son adresse ?",
+      name: "notaryConventionAdress",
+      type: "textfield",
+    },
+    {
       label: "Si il y a eu liquidation, à quel date à t-elle été régularisé ?",
       type: "date",
       name: "liquidationDate",
+    },
+    {
+      label: "Nombre de copie de la convention",
+      type: "select",
+      name: "numberCopy",
+      options: [1,2,3,4,5]
     },
     {
       type: "text",

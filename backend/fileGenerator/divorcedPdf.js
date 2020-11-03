@@ -72,7 +72,7 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Madame ${form.second.firstname} ${form.second.birthname}, né le ${moment(
+    `Madame ${form.second.firstname} ${épouseNom}, né le ${moment(
       form.second.birthdate
     ).format("DD/MM/YYYY")} à ${form.second.birthplace}, de nationalité ${
       form.second.nationality
@@ -82,6 +82,9 @@ async function generatePdf({ form }) {
 `
   );
   doc.moveDown(1);
+
+  
+  épouseNom = `${form.second.birthname}`;
 
   renderText(
     doc,
@@ -201,7 +204,7 @@ async function generatePdf({ form }) {
 
     renderTextTiret(
       doc,
-      `la nationalité étrangère de ${"hello"}, en l’espèce de nationalité «Homme_nationalité»«Femme_nationalité».`
+      `la nationalité étrangère de ${form.first.nationality !== 'français' ? `Monsieur ${form.first.lastname}` : `Madam ${épouseNom}`}, en l’espèce de nationalité «Homme_nationalité»«Femme_nationalité».`
     );
 
     renderText(
@@ -209,7 +212,7 @@ async function generatePdf({ form }) {
       "De sorte qu’il est nécessaire de justifier la compétence internationale des autorités françaises et de déterminer la loi applicable."
     );
 
-    if (form.wedding.isConsortForeign  === "true"){
+    if (form.wedding.isConsortForeign){
 
     renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
 
@@ -302,7 +305,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.wedding.isConsortForeign === "true") {
+  if (form.wedding.isConsortForeign) {
     renderText(
       doc,
       "Le régime matrimonial applicable aux époux est déterminé par la Convention de La Haye du 14 mars 1978."
@@ -1186,7 +1189,7 @@ async function generatePdf({ form }) {
 
         renderIndentText(
           doc,
-          `Les mensualités s’élèvent à ${form.debt[`${label}MensualityDebt`]}€`
+          `Les mensualités s’élèvent à ${form.debt[`${label}MensualityDebts`]}€`
         );
 
         renderIndentText(
@@ -1206,13 +1209,6 @@ async function generatePdf({ form }) {
       }
     }
 
-    //QUESTION
-    // renderText(
-    //   doc,
-    //   `Monsieur «Homme_Nom_de_Famille» a contracté un crédit auprès de :
-    //     DANS LE FORMULAIRE LES DETTES SONT MUTALISéS
-    // `
-    // );
 
     renderText(
       doc,
@@ -1284,7 +1280,7 @@ Tout changement de résidence de l'un des parents, dès lors qu'il modifie les m
 
     renderIndentTitle(doc, `Sur la fixation de la résidence des enfants`);
 
-    if (form.children.sharedChildrenGuardAgreement === "true") {
+    if (form.children.isGuardClassique === "true") {
       renderText(
         doc,
         `D’un commun accord, la résidence habituelle des enfants est fixée au domicile de ${
@@ -1547,11 +1543,15 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
       `Sur le rattachement administratif et fiscal des enfants
 `
     );
-//  TODO IMORTANT
+
     if (sharedChildrenNumber === 1) {
       renderText(
         doc,
-        `Les époux conviennent que les enfants seront rattachés fiscalement  «Rattachement_fiscal_supprimer_les_menti». 
+        `Les époux conviennent que les enfants seront rattachés fiscalement ${
+          form.children.participantChildrenHabitualResidence !== "first"
+            ? `Madame ${épouseNom}`
+            : `Monsieur ${form.first.lastname}`
+        }. 
 `
       );
     } else {
@@ -1569,7 +1569,9 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
     renderBulletPoint(doc, arrayChildrenShared);
 
-    //IF CHILDREN SHARED ===1 && age 7 ans
+
+    // TODO soucis enfant de plus de 7 ans pas repéré
+
     let countChildrenSharedNot7 = 0;
     let date7yearsAgo = new Date();
     date7yearsAgo.setFullYear(date7yearsAgo.getFullYear() - 7);
@@ -1619,7 +1621,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderText(
     doc,
-    `La présente convention sera déposée au rang des minutes de Maître «Notaire_prénom_et_nom», «Notaire_adresse», qui sera chargé de contrôler le respect des exigences formelles prévues aux articles 1° à 6° de l'article 229-3 du Code civil ainsi que le respect du délai de réflexion prévu à l'article 229-4 du Code Civil. 
+    `La présente convention sera déposée au rang des minutes de Maître ${form.annexes.notaryConventionName}, ${form.annexes.notaryConventionAdress}, qui sera chargé de contrôler le respect des exigences formelles prévues aux articles 1° à 6° de l'article 229-3 du Code civil ainsi que le respect du délai de réflexion prévu à l'article 229-4 du Code Civil. 
 `
   );
 
@@ -1640,10 +1642,10 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderText(
     doc,
-    `Maître ${form.annexes.notaryName}, Notaire,  délivrera une attestation de dépôt à chaque partie`
+    `Maître ${form.annexes.notaryConventionName}, délivrera une attestation de dépôt à chaque partie`
   );
 
-  if (form.wedding.isConsortForeign === "true") {
+  if (form.wedding.isConsortForeign) {
     renderBlueTitle(
       doc,
       `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`
@@ -1717,7 +1719,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderText(
     doc,
-    `Maître ${form.second.selfLawyer}, conseil de Madame ${épouseNom} et Maître ${form.first.selfLawyer}», Conseil de Monsieur ${form.first.lastname}, après avoir donné lecture de cet acte aux parties et recueilli leurs signatures sur ledit acte, à la date mentionnée ci-après, le contresignent, avec l’accord des parties. `
+    `Maître ${form.second.selfLawyer}, Conseil de Madame ${épouseNom} et Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, après avoir donné lecture de cet acte aux parties et recueilli leurs signatures sur ledit acte, à la date mentionnée ci-après, le contresignent, avec l’accord des parties. `
   );
 
   renderText(
@@ -1791,7 +1793,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderText(doc, "Fait à Paris, le ");
 
-  renderText(doc, "En 5 exemplaires originaux ");
+  renderText(doc, `En ${form.annexes.numberCopy} exemplaires originaux `);
 
   renderSpacing(doc);
 
@@ -1856,11 +1858,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
       `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`
     );
   }
-  if (form.annexes.proofOfConsentementAR) {
-    arrayAnnex.push(
-      `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`
-    );
-  }
+ 
 
   let countChildrenSharedNot7 = 0;
   let date7yearsAgo = new Date();
@@ -2282,7 +2280,7 @@ function renderBottomSignature(doc, form) {
     .text(`Maître ${form.first.selfLawyer}`, 150, null, {
       continued: true,
     })
-    .text(`Maître ${form.first.selfLawyer} `, 250, null, {})
+    .text(`Maître ${form.second.selfLawyer} `, 250, null, {})
     .moveDown(9)
     .text("", 75, null);
 }

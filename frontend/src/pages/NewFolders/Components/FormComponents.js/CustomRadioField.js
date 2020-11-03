@@ -16,7 +16,13 @@ function CustomRadioField({ part, field, handleWrite, formInfo }) {
               radio.value === formInfo[part.name][field.name]
             }
             value={radio.value}
-            onChange={(e) => handleWrite(e.target.value, part.name, field.name)}
+            onClick={(e) => {
+              if (formInfo[part.name][field.name] !== e.target.value) {
+                handleWrite(e.target.value, part.name, field.name)
+              } else {
+                handleWrite(undefined, part.name, field.name)
+              }
+            } }
           />
           <Typography>{radio.label}</Typography>
           {radio.information &&

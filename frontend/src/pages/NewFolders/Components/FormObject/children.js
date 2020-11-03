@@ -628,8 +628,12 @@ export const children = {
     {
       label:
         "Précisez le rythme de garde des enfants (garde alternée, droit de visite et d'hébergement les week-ends et vacances scolaires etc)",
-      name: "childrenGuard",
-      type: "textfield",
+      name: "isGuardClassique",
+      type: "radio",
+      radioFields: [
+        { label: "Guarde classique", value: "true" },
+        { label: "Guarde alterné", value: "false" },
+      ],
       fullWidth: true,
     },
     {
