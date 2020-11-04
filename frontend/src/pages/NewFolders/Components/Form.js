@@ -165,7 +165,7 @@ function FolderForm() {
         </div>
       )}
 
-      {navState === partArray[partArray.length - 1].part.name && (
+      
         <div className={classes.buttonContainer}>
           <ButtonBase
             className={classes.cancelbutton}
@@ -174,10 +174,10 @@ function FolderForm() {
             Annuler
           </ButtonBase>
           <ButtonBase className={classes.button} onClick={handleClick}>
-            Confirmer
+            Générer la convention
           </ButtonBase>
         </div>
-      )}
+      
     </div>
   );
 }

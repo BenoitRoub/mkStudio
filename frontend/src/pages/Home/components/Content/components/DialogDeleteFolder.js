@@ -24,9 +24,14 @@ function DialogDeleteFolder({ open, handleClose, name, id }) {
     );
   }
 
+  function onClose(e) {    
+    e.stopPropagation()
+    handleClose()
+  }
+
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={e => onClose(e)}>
       <DialogTitle id="form-dialog-title">Supprimer un dossier</DialogTitle>
       <DialogContent>
         <Typography className={classes.label}>
@@ -36,7 +41,7 @@ function DialogDeleteFolder({ open, handleClose, name, id }) {
       <DialogActions className={classes.dialogActions}>
         <ButtonBase
           className={classes.cancelbutton}
-          onClick={handleClose}
+          onClose={e => onClose(e)}
           color="primary"
         >
           Annuler

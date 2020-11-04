@@ -212,7 +212,7 @@ async function generatePdf({ form }) {
       "De sorte qu’il est nécessaire de justifier la compétence internationale des autorités françaises et de déterminer la loi applicable."
     );
 
-    if (form.wedding.isConsortForeign){
+    if (form.wedding.isConsortForeign === true){
 
     renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
 
@@ -305,7 +305,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.wedding.isConsortForeign) {
+  if (form.wedding.isConsortForeign === true) {
     renderText(
       doc,
       "Le régime matrimonial applicable aux époux est déterminé par la Convention de La Haye du 14 mars 1978."
@@ -1645,7 +1645,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
     `Maître ${form.annexes.notaryConventionName}, délivrera une attestation de dépôt à chaque partie`
   );
 
-  if (form.wedding.isConsortForeign) {
+  if (form.wedding.isConsortForeign === true) {
     renderBlueTitle(
       doc,
       `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`

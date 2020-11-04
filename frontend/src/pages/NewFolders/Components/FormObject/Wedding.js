@@ -10,13 +10,23 @@ export const wedding = {
     },
     {
       label:
-        "Si l'un des époux est de nationalité étrangère, précisez si le mariage en france à été transcrit dans son pays d'origine (Pour le savoir, regardez sur votre acte de naissance étranger si le mariage apparait) :",
-      name: "consortForeignWeddingValidInFrance",
-      type: "textfield",
-      fullWidth: true,
+        "L'un des époux est t-il étranger ?",
+      name: "isConsortForeign",
+      type: "radio",
+      radioFields: [
+        { label: "oui", value: "true" },
+        { label: "non", value: "false" },
+      ],
     },
     {
-      type: "break",
+      label:
+        "Si l'un des époux est de nationalité étrangère, précisez si le mariage en france à été transcrit dans son pays d'origine (Pour le savoir, regardez sur votre acte de naissance étranger si le mariage apparait) :",
+      name: "consortForeignWeddingValidInFrance",
+      type: "radio",
+      radioFields: [
+        { label: "oui", value: "true" },
+        { label: "non", value: "false" },
+      ],
     },
     {
       label: "Un contrat de mariage à-t-il été fait ?",

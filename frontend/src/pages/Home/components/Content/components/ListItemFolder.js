@@ -14,7 +14,7 @@ function ListItemFolder({ folder }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDeleteFolder, setOpenDeleteFolder] = useState(false);
-  return (
+  return (<>
     <div
       className={classes.container}
       onClick={() => history.push("/folders/" + folder._id)}
@@ -37,13 +37,13 @@ function ListItemFolder({ folder }) {
         anchorEl={anchorEl}
         handleClose={() => setAnchorEl(null)}
       />
-      <DialogDeleteFolder
+      
+    </div><DialogDeleteFolder
         open={openDeleteFolder}
         handleClose={() => setOpenDeleteFolder(false)}
         name={folder.name}
         id={folder._id}
-      />
-    </div>
+      /></>
   );
 }
 const useStyles = makeStyles((theme) => {
