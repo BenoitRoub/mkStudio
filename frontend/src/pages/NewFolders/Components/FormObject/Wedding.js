@@ -29,6 +29,16 @@ export const wedding = {
       ],
     },
     {
+      label:
+        "Si l'un des époux est de nationalité étrangère, précisez lequel",
+      name: "consortForeign",
+      type: "radioParticipant",
+      fullWidth: true
+    },
+    {
+      type: 'break'
+    },
+    {
       label: "Un contrat de mariage à-t-il été fait ?",
       name: "isWeddingContrat",
       type: "radio",

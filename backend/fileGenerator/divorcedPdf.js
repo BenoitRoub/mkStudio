@@ -204,7 +204,7 @@ async function generatePdf({ form }) {
 
     renderTextTiret(
       doc,
-      `la nationalité étrangère de ${form.first.nationality !== 'français' ? `Monsieur ${form.first.lastname}` : `Madam ${épouseNom}`}, en l’espèce de nationalité «Homme_nationalité»«Femme_nationalité».`
+      `la nationalité étrangère de ${form.wedding.consortForeign !== 'first' ? `Monsieur ${form.first.lastname}` : `Madame ${épouseNom}`}, en l’espèce de nationalité ${form.wedding.consortForeign !== 'first' ?  form.first.nationality : form.second.nationality}.`
     );
 
     renderText(
@@ -212,7 +212,7 @@ async function generatePdf({ form }) {
       "De sorte qu’il est nécessaire de justifier la compétence internationale des autorités françaises et de déterminer la loi applicable."
     );
 
-    if (form.wedding.isConsortForeign === true){
+    if (form.wedding.isConsortForeign === "true"){
 
     renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
 
@@ -280,7 +280,7 @@ async function generatePdf({ form }) {
 
     renderText(
       doc,
-      `En l’espèce, la loi française est applicable au prononcé du divorce, dans la mesure où il s’agit de la loi de la résidence habituelle commune des époux «Homme_Nom_de_Famille»-«Femme_Nom_de_jeune_fille»`
+      `En l’espèce, la loi française est applicable au prononcé du divorce, dans la mesure où il s’agit de la loi de la résidence habituelle commune des époux ${form.first.lastname}-${épouseNom}`
     );
     }
 }
@@ -305,7 +305,7 @@ async function generatePdf({ form }) {
     );
   }
 
-  if (form.wedding.isConsortForeign === true) {
+  if (form.wedding.isConsortForeign === "true") {
     renderText(
       doc,
       "Le régime matrimonial applicable aux époux est déterminé par la Convention de La Haye du 14 mars 1978."
@@ -357,7 +357,7 @@ async function generatePdf({ form }) {
 
       renderText(
         doc,
-        `Les règles édictées ci-dessus ne s’appliquent donc pas aux époux ${form.first.lastname}-${form.first.lastname}, qui se sont mariés en France le 21 mai 1992.`
+        `Les règles édictées ci-dessus ne s’appliquent donc pas aux époux ${form.first.lastname}-${form.first.lastname}, qui se sont mariés en France le ${moment(form.wedding.weddingDate).format("DD MMMM YYYY")}.`
       );
 
       renderText(
@@ -1645,7 +1645,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
     `Maître ${form.annexes.notaryConventionName}, délivrera une attestation de dépôt à chaque partie`
   );
 
-  if (form.wedding.isConsortForeign === true) {
+  if (form.wedding.isConsortForeign === "true") {
     renderBlueTitle(
       doc,
       `ELEMENT D’EXTRANEITE – TRANSCRIPTION DU DIVORCE A L’ETRANGER`

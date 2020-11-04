@@ -104,11 +104,12 @@ function FolderForm() {
   }
 
   useEffect(() => {
+    if (navState && navState !== partArray[0].part.name){
     topRef.current.scrollTo(0, 0);
     postAuth("/folder/saveForm", {
       id: id,
       form: formInfo,
-    });
+    });}
   }, [navState]);
 
   const topRef = useRef(null);
