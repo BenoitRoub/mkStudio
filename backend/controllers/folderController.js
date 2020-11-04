@@ -22,6 +22,23 @@ let FolderController = {
 
     res.json(folder);
   },
+  delete:  async function (req, res) {   
+
+    await Folder.deleteOne({_id: req.body.folderId})
+
+    let user = await User.findById(req.user.id);
+
+
+    user.folders = user.folders.filter(folder => folder.toString() !== req.body.folderId.toString())
+
+    await user.save()
+    
+    user =  await User.findById(req.user.id).populate(
+      "folders"
+    );
+
+    res.json(user.folders);
+  },
   saveForm: async function (req, res) {
     const folder = await Folder.findById(req.body.id);
 

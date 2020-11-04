@@ -5,11 +5,12 @@ import {
   InputBase,
   ButtonBase,
 } from "@material-ui/core";
-import { postNotAuth } from "../../../api/config";
+import { getAuth, postNotAuth } from "../../../api/config";
 
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../../hoc/Authorization";
 import { UserContext } from "../../../hoc/UserContext";
+import { FolderContext } from "../../../hoc/FolderContext";
 
 function Form() {
   const classes = useStyles();
@@ -22,6 +23,7 @@ function Form() {
 
   const authContext = useContext(AuthContext);
   const userContext = useContext(UserContext);
+  const folderContext = useContext(FolderContext);
 
   function handleClick() {
     if (connect) {
@@ -31,6 +33,17 @@ function Form() {
         { 200: history.push("/folders") }
       ).then((res) => {
         authContext.setAuthToken(res.data);
+        
+        getAuth("/user/personnal").then((res) => {
+          if (!res.data || !res.data.folders) {
+            authContext.setAuthToken()
+  
+          } else {
+            userContext.setUser(res.data);
+            folderContext.setFolders(res.data.folders);
+          }         
+          
+        });
       });
     } else
       postNotAuth(
@@ -39,6 +52,17 @@ function Form() {
         { 200: history.push("/folders") }
       ).then((res) => {
         authContext.setAuthToken(res.data);
+
+        getAuth("/user/personnal").then((res) => {
+          if (!res.data || !res.data.folders) {
+            authContext.setAuthToken()
+  
+          } else {
+            userContext.setUser(res.data);
+            folderContext.setFolders(res.data.folders);
+          }         
+          
+        });
       });
   }
 

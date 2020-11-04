@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import { BrowserRouter, Switch, Route, Redirect, useHistory } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect, useLocation } from "react-router-dom";
 import PrivateRoute from "../components/PrivateRoute";
 import Login from "../pages/Login/Login";
 import { AuthContext } from "./Authorization";
@@ -15,8 +15,7 @@ function Router() {
   const {authTokens, setAuthToken} = useContext(AuthContext);
   const userContext = useContext(UserContext);
   const folderContext = useContext(FolderContext);
-  const history = useHistory()
-
+  
   useEffect(() => {
     if (authTokens && !userContext.user) {
       getAuth("/user/personnal").then((res) => {
@@ -26,7 +25,7 @@ function Router() {
         } else {
           userContext.setUser(res.data);
           folderContext.setFolders(res.data.folders);
-        }   
+        } 
         
         
       });

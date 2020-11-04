@@ -6,6 +6,8 @@ var router = express.Router();
 
 router.post("/create", folderController.create);
 
+router.post("/delete", folderController.delete);
+
 router.post("/get", folderController.getFolder);
 
 router.post("/saveForm", folderController.saveForm);

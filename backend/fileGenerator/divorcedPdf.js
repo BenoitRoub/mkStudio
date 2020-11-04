@@ -11,7 +11,7 @@ async function generatePdf({ form }) {
   //   const folder = await Folder.findById(user.folders[0]);
   //   const form = folder.form;
 
-  const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+  let épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
 
   const husbandName = `${form.first.birthname} ${form.first.lastname}`;
 

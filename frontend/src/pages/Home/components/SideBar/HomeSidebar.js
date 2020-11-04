@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => {
       bottom: 16,
       display: "flex",
       justifyContent: "center",
-      width: "19.5%",
+      width: "90%",
     },
   };
 });

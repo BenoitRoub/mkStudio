@@ -5,6 +5,7 @@ import {
   Breadcrumbs,
   Typography,
 } from "@material-ui/core";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { postAuth } from "../../../api/config";
 import { FolderContext } from "../../../hoc/FolderContext";
 import { useHistory, useParams } from "react-router";
@@ -112,9 +113,22 @@ function FolderForm() {
 
   const topRef = useRef(null);
 
+  function returnToFolder() {
+    postAuth("/folder/saveForm", {
+      id: id,
+      form: formInfo,
+    });
+    history.goBack()
+  }
+
 
   return (
     <div className={classes.formContainer} ref={topRef}>
+      <ButtonBase onClick={() => returnToFolder()} className={classes.back}>
+        <ArrowBackIcon />
+        <span className={classes.backText}>
+        dossier </span>
+      </ButtonBase>
       <Breadcrumbs aria-label="breadcrumb">
         {partArray.map((part) => (
           <Typography
@@ -235,6 +249,15 @@ const useStyles = makeStyles((theme) => {
       borderRadius: 6,
       border: "1px solid rgba(0,0,0,0.20)",
     },
+    back: {
+      color: 'black',
+      fontSizem: '1rem',
+      marginBottom: 16
+    },
+    backText: {
+      marginLeft: 12,
+      fontSize: "1rem"
+    }
   };
 });
 

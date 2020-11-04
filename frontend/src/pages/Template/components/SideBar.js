@@ -33,16 +33,24 @@ const useStyles = makeStyles((theme) => {
   return {
     SideBar: {
       width: "20%",
+      position: 'relative',
+      overflow: 'hidden',
     },
     avatarContainer: {
       position: "absolute",
-      right: theme.value.absoluteLeft,
       top: theme.value.absoluteTop,
+      left: 16,
       display: "flex",
       alignItems: "center",
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     name: {
+      width: 'calc(100% - 12px - 12px - 40px - 50px)',
       marginLeft: 12,
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      overflow: "hidden"
     },
     dropDown: {
       marginLeft: 12,

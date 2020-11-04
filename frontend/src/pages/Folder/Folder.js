@@ -24,8 +24,9 @@ function Folder() {
       for (let file of folder.files) {
         if (
           new Date().getTime() - new Date(file.dateUrlSigned).getTime() >
-          59 * 5
+          59 * 5 * 1000
         ) {
+          console.log(new Date().getTime() - new Date(file.dateUrlSigned).getTime())
           postAuth("/folder/get", { id }).then((res) => {
             setFolder(res.data);
           });

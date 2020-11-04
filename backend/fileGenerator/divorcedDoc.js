@@ -19,7 +19,7 @@ async function generateDoc({ form }) {
   const user = await User.findOne();
   const folder = await Folder.findById(user.folders[0]);
   // form = folder.form;
-  const épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+  let épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
 
   const image = Media.addImage(
     docGenerated,
