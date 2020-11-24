@@ -11,7 +11,9 @@ async function generatePdf({ form }) {
   //   const folder = await Folder.findById(user.folders[0]);
   //   const form = folder.form;
 
-  let épouseNom = `${form.second.birthname} épouse ${form.second.lastname}`;
+  let épouseNom = `${form.second.birthname} épouse${
+    form.second.lastname ? " " + form.second.lastname : ""
+  }`;
 
   const husbandName = `${form.first.birthname} ${form.first.lastname}`;
 
@@ -49,7 +51,9 @@ async function generatePdf({ form }) {
       form.first.birthdate
     ).format("DD/MM/YYYY")} à ${form.first.birthplace}, de nationalité ${
       form.first.nationality
-    }, exerçant la profession  ${form.first.profession}, domicilié ${
+    }, exerçant la profession ${
+      isVoyelle(form.first.profession) ? "d'" : "de"
+    } ${form.first.profession}, domicilié ${
       form.first.adress
     }, immatriculé à la CPAM sous le numéro ${form.first.socialSecurityNumber}.
 `
@@ -72,18 +76,19 @@ async function generatePdf({ form }) {
 
   renderText(
     doc,
-    `Madame ${form.second.firstname} ${épouseNom}, né le ${moment(
+    `Madame ${form.second.firstname} ${épouseNom}, née le ${moment(
       form.second.birthdate
     ).format("DD/MM/YYYY")} à ${form.second.birthplace}, de nationalité ${
       form.second.nationality
-    }, exerçant la profession  ${form.second.profession}, domicilié ${
+    }, exerçant la profession ${
+      isVoyelle(form.second.profession) ? "d'" : "de"
+    } ${form.second.profession}, domiciliée ${
       form.second.adress
     }, immatriculé à la CPAM sous le numéro ${form.second.socialSecurityNumber}.
 `
   );
   doc.moveDown(1);
 
-  
   épouseNom = `${form.second.birthname}`;
 
   renderText(
@@ -204,7 +209,15 @@ async function generatePdf({ form }) {
 
     renderTextTiret(
       doc,
-      `la nationalité étrangère de ${form.wedding.consortForeign !== 'first' ? `Monsieur ${form.first.lastname}` : `Madame ${épouseNom}`}, en l’espèce de nationalité ${form.wedding.consortForeign !== 'first' ?  form.first.nationality : form.second.nationality}.`
+      `la nationalité étrangère de ${
+        form.wedding.consortForeign !== "first"
+          ? `Monsieur ${form.first.lastname}`
+          : `Madame ${épouseNom}`
+      }, en l’espèce de nationalité ${
+        form.wedding.consortForeign !== "first"
+          ? form.first.nationality
+          : form.second.nationality
+      }.`
     );
 
     renderText(
@@ -212,78 +225,80 @@ async function generatePdf({ form }) {
       "De sorte qu’il est nécessaire de justifier la compétence internationale des autorités françaises et de déterminer la loi applicable."
     );
 
-    if (form.wedding.isConsortForeign === "true"){
+    if (form.wedding.isConsortForeign === "true") {
+      renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
 
-    renderIndentTitle(doc, "1) COMPETENCE INTERNATIONALE DES AUTORITES ");
+      renderText(
+        doc,
+        "L’article 3 du Règlement CE n°2201/2003 du 27 novembre 2003 régissant la compétence, la reconnaissance et l’exécution des décisions en matière matrimoniale et de responsabilité parentale (ci-après, Règlement Bruxelles II bis) dispose que :"
+      );
 
-    renderText(
-      doc,
-      "L’article 3 du Règlement CE n°2201/2003 du 27 novembre 2003 régissant la compétence, la reconnaissance et l’exécution des décisions en matière matrimoniale et de responsabilité parentale (ci-après, Règlement Bruxelles II bis) dispose que :"
-    );
+      renderIndentText(
+        doc,
+        "« sont compétentes pour statuer sur les questions relatives au divorce, à la séparation de corps et à l'annulation du mariage des époux, les juridictions de l'Etat membre :"
+      );
 
-    renderIndentText(
-      doc,
-      "« sont compétentes pour statuer sur les questions relatives au divorce, à la séparation de corps et à l'annulation du mariage des époux, les juridictions de l'Etat membre :"
-    );
+      renderText(doc, "a)   sur le territoire duquel se trouve :");
 
-    renderText(doc, "a)   sur le territoire duquel se trouve :");
+      renderTextTiret(doc, "la résidence habituelle des époux");
+      renderTextTiret(
+        doc,
+        "la dernière résidence habituelle des époux dans la mesure où l'un d'eux y réside encore"
+      );
+      renderTextTiret(doc, "ou la résidence habituelle du défendeur");
+      renderTextTiret(
+        doc,
+        "ou, en cas de demande conjointe, la résidence habituelle de l'un ou l'autre époux ou la résidence habituelle du demandeur s'il y a résidé depuis au moins une année immédiatement avant l'introduction de la demande"
+      );
+      renderTextTiret(
+        doc,
+        "ou la résidence habituelle du demandeur s'il y a résidé depuis au moins six mois immédiatement avant l'introduction de la demande et s'il est soit ressortissant de l'Etat membre en question, soit, dans le cas du Royaume-Uni et de l'Irlande, s'il y a son «domicile»"
+      );
+      doc.moveDown(1);
 
-    renderTextTiret(doc, "la résidence habituelle des époux");
-    renderTextTiret(
-      doc,
-      "la dernière résidence habituelle des époux dans la mesure où l'un d'eux y réside encore"
-    );
-    renderTextTiret(doc, "ou la résidence habituelle du défendeur");
-    renderTextTiret(
-      doc,
-      "ou, en cas de demande conjointe, la résidence habituelle de l'un ou l'autre époux ou la résidence habituelle du demandeur s'il y a résidé depuis au moins une année immédiatement avant l'introduction de la demande"
-    );
-    renderTextTiret(
-      doc,
-      "ou la résidence habituelle du demandeur s'il y a résidé depuis au moins six mois immédiatement avant l'introduction de la demande et s'il est soit ressortissant de l'Etat membre en question, soit, dans le cas du Royaume-Uni et de l'Irlande, s'il y a son «domicile»"
-    );
-    doc.moveDown(1);
+      renderText(
+        doc,
+        "b)   de la nationalité des deux époux ou, dans le cas du Royaume-Uni et de l’Irlande, du « domicile commun »."
+      );
 
-    renderText(
-      doc,
-      "b)   de la nationalité des deux époux ou, dans le cas du Royaume-Uni et de l’Irlande, du « domicile commun »."
-    );
+      renderText(
+        doc,
+        "Par conséquent, les autorités françaises sont compétentes dans la mesure où il s’agit de la résidence habituelle commune des époux «Homme_Nom_de_Famille»-«Femme_Nom_de_jeune_fille»."
+      );
 
-    renderText(
-      doc,
-      "Par conséquent, les autorités françaises sont compétentes dans la mesure où il s’agit de la résidence habituelle commune des époux «Homme_Nom_de_Famille»-«Femme_Nom_de_jeune_fille»."
-    );
+      renderIndentTitle(doc, "2) LOI APPLICABLE ");
 
-    renderIndentTitle(doc, "2) LOI APPLICABLE ");
+      renderText(
+        doc,
+        "Texte applicable : Il s’agit du Règlement n°1259/2010 du 20 décembre 2010 mettant en œuvre une coopération renforcée en matière de loi applicable au divorce (ci-après « Règlement Rome III »)."
+      );
 
-    renderText(
-      doc,
-      "Texte applicable : Il s’agit du Règlement n°1259/2010 du 20 décembre 2010 mettant en œuvre une coopération renforcée en matière de loi applicable au divorce (ci-après « Règlement Rome III »)."
-    );
+      renderOutlineText(doc, "Détermination de la loi applicable : ");
 
-    renderOutlineText(doc, "Détermination de la loi applicable : ");
+      renderText(
+        doc,
+        `Les époux ${form.first.lastname}-${form.second.birthname} n’ayant pas choisi préalablement à la rédaction de la présente convention la loi applicable à leur divorce, l’article 8 prévoit que la loi applicable est: `
+      );
 
-    renderText(
-      doc,
-      `Les époux ${form.first.lastname}-${form.second.birthname} n’ayant pas choisi préalablement à la rédaction de la présente convention la loi applicable à leur divorce, l’article 8 prévoit que la loi applicable est: `
-    );
+      renderTextTiret(
+        doc,
+        "la loi de la résidence habituelle commune des époux"
+      );
+      renderTextTiret(
+        doc,
+        "à défaut, la loi de la dernière résidence habituelle commune, à condition qu’elle ait pris fin moins d’un an avant la demande de divorce et que l’un d’eux y réside encore"
+      );
+      renderTextTiret(doc, "à défaut, la loi nationale commune des époux");
+      renderTextTiret(doc, "à défaut, la loi du for");
 
-    renderTextTiret(doc, "la loi de la résidence habituelle commune des époux");
-    renderTextTiret(
-      doc,
-      "à défaut, la loi de la dernière résidence habituelle commune, à condition qu’elle ait pris fin moins d’un an avant la demande de divorce et que l’un d’eux y réside encore"
-    );
-    renderTextTiret(doc, "à défaut, la loi nationale commune des époux");
-    renderTextTiret(doc, "à défaut, la loi du for");
+      doc.moveDown(1);
 
-    doc.moveDown(1);
-
-    renderText(
-      doc,
-      `En l’espèce, la loi française est applicable au prononcé du divorce, dans la mesure où il s’agit de la loi de la résidence habituelle commune des époux ${form.first.lastname}-${épouseNom}`
-    );
+      renderText(
+        doc,
+        `En l’espèce, la loi française est applicable au prononcé du divorce, dans la mesure où il s’agit de la loi de la résidence habituelle commune des époux ${form.first.lastname}-${épouseNom}`
+      );
     }
-}
+  }
 
   renderBlueTitle(doc, "DÉCLARATION DES ÉPOUX");
 
@@ -357,7 +372,11 @@ async function generatePdf({ form }) {
 
       renderText(
         doc,
-        `Les règles édictées ci-dessus ne s’appliquent donc pas aux époux ${form.first.lastname}-${form.first.lastname}, qui se sont mariés en France le ${moment(form.wedding.weddingDate).format("DD MMMM YYYY")}.`
+        `Les règles édictées ci-dessus ne s’appliquent donc pas aux époux ${
+          form.first.lastname
+        }-${form.first.lastname}, qui se sont mariés en France le ${moment(
+          form.wedding.weddingDate
+        ).format("DD MMMM YYYY")}.`
       );
 
       renderText(
@@ -680,7 +699,10 @@ async function generatePdf({ form }) {
           `D’un véhicule ${
             form.propertyDistribution[`${label}Vehicle`]
           }, qui sera conservé par ${
-            form.propertyDistribution[`${label}VehicleParticipantKeeper`]
+            form.propertyDistribution[`${label}VehicleParticipantKeeper`] ===
+            "first"
+              ? `Monsieur ${form.first.lastname}`
+              : `Madame ${form.second.lastname}`
           }`
         );
       }
@@ -1082,57 +1104,56 @@ async function generatePdf({ form }) {
     );
   }
 
-    renderText(
-      doc,
-      "Ils n’ont procédé à aucune modification de leur régime matrimonial."
+  renderText(
+    doc,
+    "Ils n’ont procédé à aucune modification de leur régime matrimonial."
+  );
+
+  renderText(
+    doc,
+    "Les parties déclarent qu’elles ne possèdent aucun actif mobilier ou immobilier et aucun passif commun ou indivis, ni aucune créance entre époux ou d’indivision"
+  );
+
+  renderText(
+    doc,
+    "Les époux déclarent par ailleurs avoir parfaitement connaissance de leurs situations financières respectives, et se satisfaire de l’accord conclu entre eux à ce sujet."
+  );
+
+  renderText(
+    doc,
+    "Ils renoncent par conséquent à tous recours ultérieur à ce titre entre eux, ainsi qu’à l’encontre des rédacteurs et dépositaire de la présente convention."
+  );
+
+  renderText(doc, "En conséquence il n’y a pas lieu à liquidation.");
+
+  renderText(doc, "Cela étant dit, les époux déclarent :");
+
+  let arrayIsDebtWedding = [
+    "Qu'ils ont procédé au partage amiable des meubles communs meublant le domicile conjugal, sans valeur vénale ;",
+    "Qu'ils ont chacun repris chacun l'ensemble de leurs effets personnels ;",
+  ];
+
+  if (form.debt.isDebtOrCredits !== "true") {
+    arrayIsDebtWedding.push(
+      "Qu'ils n'ont contracté aucune dette susceptible d'entraîner la solidarité passive de l'autre époux sur le fondement de l'article 220 du Code civil ;"
     );
+  }
+  arrayIsDebtWedding = [
+    ...arrayIsDebtWedding,
+    "Qu'ils ont chacun repris chacun l'ensemble de leurs effets personnels ;",
+  ];
 
-    renderText(
-      doc,
-      "Les parties déclarent qu’elles ne possèdent aucun actif mobilier ou immobilier et aucun passif commun ou indivis, ni aucune créance entre époux ou d’indivision"
-    );
+  renderBulletPoint(doc, arrayIsDebtWedding);
 
-    renderText(
-      doc,
-      "Les époux déclarent par ailleurs avoir parfaitement connaissance de leurs situations financières respectives, et se satisfaire de l’accord conclu entre eux à ce sujet."
-    );
+  renderText(
+    doc,
+    "Les parties soussignées déclarent être intégralement remplies de leurs droits."
+  );
 
-    renderText(
-      doc,
-      "Ils renoncent par conséquent à tous recours ultérieur à ce titre entre eux, ainsi qu’à l’encontre des rédacteurs et dépositaire de la présente convention."
-    );
-
-    renderText(doc, "En conséquence il n’y a pas lieu à liquidation.");
-
-    renderText(doc, "Cela étant dit, les époux déclarent :");
-
-    let arrayIsDebtWedding = [
-      "Qu'ils ont procédé au partage amiable des meubles communs meublant le domicile conjugal, sans valeur vénale ;",
-      "Qu'ils ont chacun repris chacun l'ensemble de leurs effets personnels ;",
-    ];
-
-    if (form.debt.isDebtOrCredits !== "true") {
-      arrayIsDebtWedding.push(
-        "Qu'ils n'ont contracté aucune dette susceptible d'entraîner la solidarité passive de l'autre époux sur le fondement de l'article 220 du Code civil ;"
-      );
-    }
-    arrayIsDebtWedding = [
-      ...arrayIsDebtWedding,
-      "Qu'ils ont chacun repris chacun l'ensemble de leurs effets personnels ;",
-    ];
-
-    renderBulletPoint(doc, arrayIsDebtWedding);
-
-    renderText(
-      doc,
-      "Les parties soussignées déclarent être intégralement remplies de leurs droits."
-    );
-
-    renderText(
-      doc,
-      `En conséquence, Monsieur ${form.first.lastname} et Madame ${épouseNom} renoncent à élever à l’avenir toutes réclamations ou contestations relatives à la liquidation et au partage intervenu entre eux ou à faire valoir la moindre créance, indemnité ou compensation dans le cadre des droits qu’ils avaient ou auraient pu tenir de leur régime matrimonial.`
-    );
-  
+  renderText(
+    doc,
+    `En conséquence, Monsieur ${form.first.lastname} et Madame ${épouseNom} renoncent à élever à l’avenir toutes réclamations ou contestations relatives à la liquidation et au partage intervenu entre eux ou à faire valoir la moindre créance, indemnité ou compensation dans le cadre des droits qu’ils avaient ou auraient pu tenir de leur régime matrimonial.`
+  );
 
   if (form.wedding.isWeddingContrat === "true") {
     renderText(
@@ -1208,7 +1229,6 @@ async function generatePdf({ form }) {
         );
       }
     }
-
 
     renderText(
       doc,
@@ -1569,7 +1589,6 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
     renderBulletPoint(doc, arrayChildrenShared);
 
-
     // TODO soucis enfant de plus de 7 ans pas repéré
 
     let countChildrenSharedNot7 = 0;
@@ -1632,7 +1651,7 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
 
   renderText(
     doc,
-    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, est expressément désigné pour adresser à Maître ${form.annexes.notaryName}, Notaire, la convention de divorce et ses annexes aux fins de dépôt au rang de ses minutes, dans le délai de sept jours suivant la date de la signature de la convention par les époux ${form.first.lastname}-${form.second.lastname} et leurs avocats. `
+    `Maître ${form.first.selfLawyer}, Conseil de Monsieur ${form.first.lastname}, est expressément désigné pour adresser à Maître ${form.annexes.notaryConventionName}, Notaire, la convention de divorce et ses annexes aux fins de dépôt au rang de ses minutes, dans le délai de sept jours suivant la date de la signature de la convention par les époux ${form.first.lastname}-${form.second.lastname} et leurs avocats. `
   );
 
   renderText(
@@ -1858,7 +1877,6 @@ Les époux conviennent qu’aucune contribution à l’entretien et à l’éduc
       `Preuve du consentement de chacun des époux à l’envoi de la notification de la convention de divorce par recommandé électronique.`
     );
   }
- 
 
   let countChildrenSharedNot7 = 0;
   let date7yearsAgo = new Date();
@@ -2143,17 +2161,18 @@ async function generateSecondAnnexePdf({ form }) {
 
   const buffer = await new Promise((resolve, reject) => {
     stream.on("finish", async function () {
-      fs.readFile("doc/pdf/" + random + "outputSecondAnnexes.pdf", function (
-        err,
-        data
-      ) {
-        fs.unlink("doc/pdf/" + random + "outputSecondAnnexes.pdf", function (
-          err
-        ) {
-          console.log(err);
-        });
-        resolve(data);
-      });
+      fs.readFile(
+        "doc/pdf/" + random + "outputSecondAnnexes.pdf",
+        function (err, data) {
+          fs.unlink(
+            "doc/pdf/" + random + "outputSecondAnnexes.pdf",
+            function (err) {
+              console.log(err);
+            }
+          );
+          resolve(data);
+        }
+      );
     });
   });
   return buffer;
