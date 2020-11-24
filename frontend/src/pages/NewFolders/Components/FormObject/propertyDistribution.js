@@ -75,19 +75,19 @@ export const propertyDistribution = {
     {
       label: "1 )",
       name: "firstVehicleParticipantKeeper",
-      type: "textfield",
+      type: "radioParticipant",
       if: 10,
     },
     {
       label: "2 )",
       name: "secondVehicleParticipantKeeper",
-      type: "textfield",
+      type: "radioParticipant",
       if: 11,
     },
     {
       label: "3 )",
       name: "thirdVehicleParticipantKeeper",
-      type: "textfield",
+      type: "radioParticipant",
       if: 12,
     },
     {

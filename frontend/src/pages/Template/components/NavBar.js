@@ -22,12 +22,12 @@ function NavBar() {
           Accueil
         </Typography>
 
-        <Typography
+        {/* <Typography
           className={classes.folders}
           onClick={() => history.push("/folders")}
         >
           Dossiers
-        </Typography>
+        </Typography> */}
       </div>
     </div>
   );

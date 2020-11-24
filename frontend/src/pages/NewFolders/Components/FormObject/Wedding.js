@@ -9,8 +9,7 @@ export const wedding = {
       type: "textfield",
     },
     {
-      label:
-        "L'un des époux est t-il étranger ?",
+      label: "L'un des époux est t-il étranger ?",
       name: "isConsortForeign",
       type: "radio",
       radioFields: [
@@ -29,14 +28,13 @@ export const wedding = {
       ],
     },
     {
-      label:
-        "Si l'un des époux est de nationalité étrangère, précisez lequel",
+      label: "Si l'un des époux est de nationalité étrangère, précisez lequel",
       name: "consortForeign",
       type: "radioParticipant",
-      fullWidth: true
+      fullWidth: true,
     },
     {
-      type: 'break'
+      type: "break",
     },
     {
       label: "Un contrat de mariage à-t-il été fait ?",
@@ -105,7 +103,7 @@ export const wedding = {
     },
     {
       label:
-        "Si vous êtes déjà séparé, merci de préciser la date de la séparation éffective",
+        "Si vous êtes déjà séparés, merci de préciser la date de la séparation éffective",
       name: "separationDate",
       type: "date",
     },

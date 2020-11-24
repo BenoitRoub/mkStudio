@@ -631,8 +631,8 @@ export const children = {
       name: "isGuardClassique",
       type: "radio",
       radioFields: [
-        { label: "Guarde classique", value: "true" },
-        { label: "Guarde alterné", value: "false" },
+        { label: "Garde classique", value: "true" },
+        { label: "Garde alterné", value: "false" },
       ],
       fullWidth: true,
     },
